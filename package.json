@@ -1,0 +1,29 @@
+{
+  "name": "ddv-restful-api",
+  "version": "0.0.1",
+  "description": "ddv-restful-api",
+  "main": "./lib/api.js",
+  "scripts": {
+    "dist": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ddvjs/ddv-restful-api.git"
+  },
+  "keywords": [
+    "restfulapi",
+    "api"
+  ],
+  "author": "hua",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ddvjs/ddv-restful-api/issues"
+  },
+  "homepage": "https://github.com/ddvjs/ddv-restful-api#readme",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.18.0",
+    "webpack": "^1.14.0"
+  }
+}
