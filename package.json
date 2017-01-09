@@ -19,6 +19,18 @@
   "bugs": {
     "url": "https://github.com/ddvjs/ddv-restful-api/issues"
   },
+  "jshintConfig": {
+    "esversion": 6,
+    "undef": true,
+    "unused": true,
+    "node": true,
+    "predef": [
+      "module",
+      "require",
+      "console",
+      "process"
+    ]
+  },
   "homepage": "https://github.com/ddvjs/ddv-restful-api#readme",
   "devDependencies": {
     "babel-core": "^6.21.0",

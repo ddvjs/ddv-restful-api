@@ -3,7 +3,7 @@ var path = require("path");
 
 module.exports = {
     entry: {
-        "api": "./lib/api.js"
+        "api": "./lib/index.js"
     },
     output: {
         path: path.join(__dirname, './dist'),  //设置打包后的js的输出位置
