@@ -15,6 +15,16 @@ module.exports = {
         //    cookie: path.join(__dirname,"./static/js/jquery.cookie.js"),
         }
     },
+    plugins:[
+        /*new webpack.optimize.UglifyJsPlugin({
+          output: {
+            comments: false,
+          },
+          compress: {
+            warnings: false
+          }
+      })*/
+    ],
     module: {
         loaders: [{
             test: /\.js$/,
