@@ -152,6 +152,14 @@
 	const request = api.request = __webpack_require__(4);
 	const sign = api.sign = __webpack_require__(46);
 	const session = api.session = __webpack_require__(47);
+	
+	api.copyObjByKey = function copyObjByKey(oldObj, newObj, keys){
+	    keys = keys || [];
+	    keys.forEach(function(key){
+	        oldObj[key] = newObj[key]||oldObj[key];
+	    });
+	};
+	api.copyObjByKey(api, api.Promise, 'all race reject resolve'.split(' '));
 	//设置baseUrl
 	api.setBaseUrl = function(url){
 	    request.baseUrl = api.baseUrl = url ;
@@ -267,12 +275,6 @@
 	        message = stack = void 0 ;
 	    }
 	};
-	api.copyObjByKey = function copyObjByKey(oldObj, newObj, keys){
-	    keys = keys || [];
-	    keys.forEach(function(key){
-	        oldObj[key] = newObj[key]||oldObj[key];
-	    });
-	}
 	//下一进程访问
 	api.nextTick = function(fn){
 	    var _this = this;
