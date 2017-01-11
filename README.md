@@ -1,4 +1,4 @@
-# restful-api
+# ddv-restful-api
 >这是一个基于[Promise](https://www.promisejs.org/)封装的请求模块
 
 ## 安装
@@ -9,82 +9,46 @@
 $ npm install ddv-restful-api
 ```
 
+**引入:**
+
+```javascript
+import * as api from 'ddv-restful-api';
+```
+
+
 **独立版本:**
 
-你可以直接使用`<script>`标签直接引入
+你可以直接使用`<script>`标签直接引入， `ddvRestFulApi` 会被注册为一个全局变量。
 
 ```html
 <script src="https://unpkg.com/ddv-restful-api/dist/api.js"></script>
 ```
 
-Note that the [es5-shim](https://github.com/es-shims/es5-shim) must be loaded before this library to support browsers pre IE9.
+需要注意的是，为了兼容IE9以下版本浏览器需要预先加载[es5-shim](https://github.com/es-shims/es5-shim)。
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script>
 ```
 
+**引入:**
 
+```javascript
+var api = ddvRestfulApi;
+```
 
 ## 配置
 
 ```javascript
-import * as api from 'ddv-restful-api';
-api.setBaseUrl('http://api.abctest.com');
-api.setHeadersPrefix('x-ddv-');
-api.setLongStorage(false);
-
-```
-
-## 使用
-
->* `restful-api` 支持 `GET`、`POST`、`PUT`、`DELETE`四种请求方式，以及拥有 `get`、`post`、`put`、 `del`（或 `delete`）、`api`五个方法。
->* 分别使用方法 `get`、`post`、`put`、 `del`（或 `delete`）执行对应的请求。
->* `api`方法支持模拟`GET`、`POST`、`PUT`、`DELETE` 以及更多请求方式。
->* `api.setSessionInitTrySum`设置会话初始化最大自动尝试次数
-
-
-### 例子：
-##### 1、GET请求
-
->* `send` 发送的数据会自动转换为 `query` 服务器GET参数
->* `headers()` 方法改变请求头：`api.get('/path').headers({})`。
->* `path()`方法可以改变请求的path：`api.get('/path').path('/path2')`。
->* `query()` 方法就是发送地址栏 `？` 后面的参数
->* `sendData()` 方法
->* `req()`# restful-api
->这是一个基于[Promise](https://www.promisejs.org/)封装的请求模块
-
-## 安装
-
-**npm:**
-
-```shell
-$ npm install ddv-restful-api
-```
-<!--
-**独立版本:**
-
-你可以直接使用`<script>`标签直接引入
-
-```html
-<script src="https://www.promisejs.org/polyfills/promise-6.1.0.js"></script>
-```
-
-Note that the [es5-shim](https://github.com/es-shims/es5-shim) must be loaded before this library to support browsers pre IE9.
-
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script>
-```
-
--->
-
-## 配置
-
-```javascript
-import * as api from 'ddv-restful-api';
-api.setBaseUrl('http://api.warder.ping-qu.com');
+//设置默认请求域名
+api.setBaseUrl('http://api.testabc.com');
+//自定义头前缀
 api.setHeadersPrefix('x-hz-');
+//是否长期会话
 api.setLongStorage(false);
+//设置会话初始化最大自动尝试次数，默认3次
+api.setSessionInitTrySum(3);
+//设置初始化session的path，默认/session/init
+api.setSessionInitPath('/session/init');
 
 ```
 
@@ -121,10 +85,10 @@ api.get('/v1_0/pc/raiders/news/type').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 ```
 >* 小提示如果您仅仅是使用get请求你可以选择
@@ -144,10 +108,10 @@ getApi('/v1_0/pc/raiders/news/type').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 
 ```
@@ -174,10 +138,10 @@ postApi('/v1_0/pc/raiders/news/type').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 ```
 
@@ -201,10 +165,10 @@ api('/v1_0/pc/raiders/news/type').method('PUT').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 ```
 
@@ -224,10 +188,10 @@ api.get('/v1_0/pc/raiders/news/type').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 ```
 >* 小提示如果您仅仅是使用get请求你可以选择
@@ -247,10 +211,10 @@ getApi('/v1_0/pc/raiders/news/type').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 
 ```
@@ -277,10 +241,10 @@ postApi('/v1_0/pc/raiders/news/type').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 ```
 
@@ -304,9 +268,9 @@ api('/v1_0/pc/raiders/news/type').method('PUT').send({
         }
     ]
 }).then(function(res){
-	console.log('结果:',res);
+    console.log('结果:',res);
 }).catch(function(e){
-	console.log('e',e.statusCode);
-	console.log('e',e.message);
+    console.log('e',e.statusCode);
+    console.log('e',e.message);
 });
 ```
