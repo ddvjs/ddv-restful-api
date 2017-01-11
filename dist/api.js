@@ -66,7 +66,6 @@
 	                _promise.path(path || '/');
 	            }else{
 	                e = new api.ApiError('method type error');
-	                console.log('path',path)
 	                reject(e);
 	            }
 	            //如果没有错误
@@ -166,6 +165,10 @@
 	//设置是否使用长存储
 	api.setSessionInitTrySum = function(sum){
 	    session.initTrySum = sum || session.initTrySum ;
+	};
+	//设置初始化session的path
+	api.setSessionInitPath = function(path){
+	    session.sessionInitPath = path || session.sessionInitPath ;
 	};
 	//GET请求
 	api.get = function ddvRestFulApiGet(path, req, res) {
@@ -321,6 +324,9 @@
 	    }
 	    return fnc;
 	}());
+	if(typeof window !=='undefined'&&window.window === window){
+	    window.ddvRestFulApi = api;
+	}
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
@@ -8932,7 +8938,7 @@
 	        var cookiename, data;
 	        try{
 	    		cookiename = o.cookieNameEnCode ;
-	    		o.sessionDataStr = session._getCookiesByStr(cookiename,  (o.req&&o.req.headers&&o.req.headers.cookie||'')) || o.sessionDataStr ;
+	    		o.sessionDataStr = session._getCookiesServer(cookiename, o.req) || (o.res&&o.res.cookieDdvRestfulApiStr) || o.sessionDataStr ;
 	    		//本地存储模块
 	            if (typeof resolve ==='function') {
 	                resolve(o);
@@ -8943,6 +8949,79 @@
 	            }
 	        }
 	        resolve = reject = data = o = void 0;
+	    },
+	    //客户端获取
+	    _setDataNode(o, data, resolve, reject){
+	        if (!(o&&o.res)) {
+	            reject(new Error('Your browser does not support cookies and localStorage'));
+	            return ;
+	        }
+	        if (!o.cookieNameEnCode) {
+	            reject(new Error('Deceased cookie surname'));
+	            return ;
+	        }
+	    	var cookiename = o.cookieNameEnCode ;
+	        o.res.cookieDdvRestfulApiStr = data ;
+	        try{
+	    		//本地存储模块
+				if (session.isLongStorage) {
+					session._setCookiesServer(o.res, cookiename, data);
+				}else{
+					session._setCookiesServer(o.res, cookiename, data, session.getExpiresDate('365', '12', '60'));
+				}
+	
+	            if (typeof resolve ==='function') {
+	                resolve(o);
+	            }
+	        }catch(e){
+	            if (typeof reject ==='function') {
+	                reject(e);
+	            }
+	        }
+	        resolve = reject = data = o = sessionData = void 0;
+	    },
+	    //设置cookies
+	    _getCookiesServer(key, req){
+	        if (req) {
+	            return (req.cookies&&req.cookies[key]) || session._getCookiesByStr(key,  (req.headers&&req.headers.cookie||'')) || '' ;
+	        }else{
+	            return '';
+	        }
+	    },
+	    //设置cookies
+	    _setCookiesServer(res, key, value, expires, path, domain, isSecure){
+	        var t ;
+	        if (!res) {
+	            return ;
+	        }
+	        if (typeof res.cookie === 'function') {
+	            t = { domain: domain||'', path: path||'/', secure: Boolean(isSecure) };
+	            if(t.domain){
+	                delete t.domain ;
+	            }
+	            if(t.secure){
+	                delete t.secure ;
+	            }
+	            if (expires) {
+	                t.expires = new Date(expires);
+	            }
+	            res.cookie(key, value, t);
+	        }else{
+	            t = '' ;
+				t+= (key.toString().trim() + '=');
+				t+= session.escape(value) ;
+				t+= expires ? '; expires=' + expires : '' ;
+				t+= (typeof path === 'string' && path !== '') ? ('; path=' + path) : '; path=/' ;
+				t+= (typeof domain === 'string' && domain !== '') ? '; domain=' + domain : '' ;
+				t+= isSecure ? '; secure' : '';
+	            //强制一个数组
+	            res.cookiesSetArray = res.cookiesSetArray || [];
+				//加入输出数组
+				res.cookiesSetArray.push(t);
+				//设置输出头
+				res.setHeader('Set-Cookie', res.cookiesSetArray);
+	        }
+	        t = void 0;
 	    },
 	    //客户端获取
 	    _getDataClient(o, resolve, reject){
@@ -9024,7 +9103,23 @@
 	        }
 	    },
 	    //客户端存储
-	    _setCookiesClient(key){
+	    _setCookiesClient(key, value, expires, path, domain, isSecure) {
+	        var t;
+	        key = (key||'').toString().trim() ;
+	        try{
+	            if(VS_COOKIEDM!==undefined && VS_COOKIEDM!==null && !domain ){
+	                domain = VS_COOKIEDM;
+	            }
+	        }catch(e){}
+	        t = '' ;
+			t+= (key.toString().trim() + '=');
+			t+= session.escape(value) ;
+			t+= expires ? '; expires=' + expires : '' ;
+			t+= (typeof path === 'string' && path !== '') ? ('; path=' + path) : '; path=/' ;
+			t+= (typeof domain === 'string' && domain !== '') ? '; domain=' + domain : '' ;
+			t+= isSecure ? '; secure' : '';
+	        document.cookie = t ;
+	        t = void 0;
 	    },
 	    _cookieNameEnCode(name){
 			name =  cryptoJsCore.enc.Utf8.parse((name||'sid').toString()||'').toString(cryptoJsBase64);
