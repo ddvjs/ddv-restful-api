@@ -44,59 +44,71 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	module.exports = __webpack_require__(1);
-
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
 	var api, Api, Apip;
 	var api = module.exports = function ddvRestFulApi(path, req, res) {
-	    var _promise = new api.Api(function(resolve, reject){
-	        api.nextTick(function(){
+	    var _promise = new api.Api(function (resolve, reject) {
+	        api.nextTick(function () {
 	            var e = null;
-	            if(typeof path === 'object'){
+	            if ((typeof path === 'undefined' ? 'undefined' : _typeof(path)) === 'object') {
 	                _promise.path(path.path);
 	                _promise.sendData(path.data);
 	                _promise.headers(path.headers);
 	                _promise.method(path.method);
-	            }else if(typeof path === 'string'){
+	            } else if (typeof path === 'string') {
 	                _promise.path(path || '/');
-	            }else{
+	            } else {
 	                e = new api.ApiError('method type error');
 	                reject(e);
 	            }
 	            //如果没有错误
-	            if(!e){
-	                _promise._resolve = resolve ;
-	                _promise._reject = reject ;
+	            if (!e) {
+	                _promise._resolve = resolve;
+	                _promise._reject = reject;
 	                //设定请求对象
-	                if (req&&req.req&&req.res) {
+	                if (req && req.req && req.res) {
 	                    _promise.context(req);
-	                }else{
+	                } else {
 	                    _promise.req(req);
 	                    _promise.res(res);
 	                }
 	            }
 	            //回收变量
 	            e = path = req = res = resolve = reject = void 0;
-	            api.nextTick.call(_promise, function(){
-	                var _promise = this ;
+	            api.nextTick.call(_promise, function () {
+	                var _promise = this;
 	                api.request(_promise, function (e, res) {
 	                    if (_promise) {
 	                        if (e) {
-	                            if (typeof _promise._reject==='function') {
+	                            if (typeof _promise._reject === 'function') {
 	                                _promise._reject(e);
-	                            }else{
-	                                console.error('_promise._reject error',e);
+	                            } else {
+	                                console.error('_promise._reject error', e);
 	                            }
-	                        }else{
-	                            if (typeof _promise._resolve==='function') {
+	                        } else {
+	                            if (typeof _promise._resolve === 'function') {
 	                                _promise._resolve(res);
-	                            }else{
-	                                console.error('_promise._resolve error',res);
+	                            } else {
+	                                console.error('_promise._resolve error', res);
 	                            }
 	                        }
 	                    }
@@ -105,38 +117,41 @@
 	            });
 	            _promise = void 0;
 	        });
-	    }).then(function(_request){
-	        return new api.Promise(function(resolve, reject) {
-	            var r = null, e = null, code = 0, res = _request.serverRes;
-	            code = res.statusCode ;
-	            try{
-	                r = JSON.parse(res.body) ;
-	            }catch(e1){
+	    }).then(function (_request) {
+	        return new api.Promise(function (resolve, reject) {
+	            var r = null,
+	                e = null,
+	                code = 0,
+	                res = _request.serverRes;
+	            code = res.statusCode;
+	            try {
+	                r = JSON.parse(res.body);
+	            } catch (e1) {
 	                e.body = res.body;
 	                console.log(e.body);
 	                e = e1;
 	            }
 	            if (e) {
-	                e.statusCode = res.statusCode ;
-	                e.error_id = res.status ;
-	                e.message = res.status || 'Unknow Error' ;
+	                e.statusCode = res.statusCode;
+	                e.error_id = res.status;
+	                e.message = res.status || 'Unknow Error';
 	                reject(e);
-	            }else if (r) {
+	            } else if (r) {
 	                if (r.state) {
 	                    r.statusCode = r.statusCode || r.code || res.statusCode;
 	                    r.error_id = r.error_id || res.status;
-	                    r.message = r.message || r.msg || res.status || 'Unknow Error' ;
+	                    r.message = r.message || r.msg || res.status || 'Unknow Error';
 	                    resolve(r);
-	                }else{
+	                } else {
 	                    e = new Error(r.message || r.msg || res.status || 'Unknow Error');
-	                    e.statusCode = r.statusCode || r.code || res.statusCode ;
+	                    e.statusCode = r.statusCode || r.code || res.statusCode;
 	                    e.error_id = r.error_id || res.status;
-	                    e.message = r.message || r.msg || res.status || 'Unknow Error' ;
+	                    e.message = r.message || r.msg || res.status || 'Unknow Error';
 	                    reject(e);
 	                }
 	            }
 	            _request.destroy();
-	            _request = resolve = reject = r = e = code =res = void 0 ;
+	            _request = resolve = reject = r = e = code = res = void 0;
 	        });
 	    });
 	    _promise._baseUrl = api.baseUrl;
@@ -147,38 +162,43 @@
 	    _promise._query = Object.create(null);
 	    return _promise;
 	};
-	api.Promise = Promise ;
-	const url = api.url = __webpack_require__(3);
-	const request = api.request = __webpack_require__(4);
-	const sign = api.sign = __webpack_require__(46);
-	const session = api.session = __webpack_require__(47);
+	api.Promise = __webpack_require__(3);
+	api.prototype = api.Promise.prototype;
+	var url = api.url = __webpack_require__(4);
+	var request = api.request = __webpack_require__(5);
+	var sign = api.sign = __webpack_require__(47);
+	var session = api.session = __webpack_require__(48);
 	
-	api.copyObjByKey = function copyObjByKey(oldObj, newObj, keys){
+	api.copyObjByKey = function copyObjByKey(oldObj, newObj, keys) {
 	    keys = keys || [];
-	    keys.forEach(function(key){
-	        oldObj[key] = newObj[key]||oldObj[key];
+	    keys.forEach(function (key) {
+	        oldObj[key] = newObj[key] || oldObj[key];
 	    });
 	};
-	api.copyObjByKey(api, api.Promise, 'all race reject resolve'.split(' '));
+	'all race reject resolve'.split(' ').forEach(function (key) {
+	    api[key] = function () {
+	        return api.Promise[key].apply(api.Promise, arguments);
+	    };
+	});
 	//设置baseUrl
-	api.setBaseUrl = function(url){
-	    request.baseUrl = api.baseUrl = url ;
+	api.setBaseUrl = function (url) {
+	    request.baseUrl = api.baseUrl = url;
 	};
 	//设置headersPrefix
-	api.setHeadersPrefix = function(prefix){
-	    sign.headersPrefix = request.headersPrefix = api.headersPrefix = prefix ;
+	api.setHeadersPrefix = function (prefix) {
+	    sign.headersPrefix = request.headersPrefix = api.headersPrefix = prefix;
 	};
 	//设置是否使用长存储
-	api.setLongStorage = function(isUseLong){
-	    session.isLongStorage = Boolean(isUseLong) ;
+	api.setLongStorage = function (isUseLong) {
+	    session.isLongStorage = Boolean(isUseLong);
 	};
 	//设置是否使用长存储
-	api.setSessionInitTrySum = function(sum){
-	    session.initTrySum = sum || session.initTrySum ;
+	api.setSessionInitTrySum = function (sum) {
+	    session.initTrySum = sum || session.initTrySum;
 	};
 	//设置初始化session的path
-	api.setSessionInitPath = function(path){
-	    session.sessionInitPath = path || session.sessionInitPath ;
+	api.setSessionInitPath = function (path) {
+	    session.sessionInitPath = path || session.sessionInitPath;
 	};
 	//GET请求
 	api.get = function ddvRestFulApiGet(path, req, res) {
@@ -197,62 +217,91 @@
 	    return api(path, req, res).method('DELETE');
 	};
 	//实例化构造函数
-	api.Api = Api = class DdvRestFulApi extends api.Promise{
+	api.Api = Api = function (_api$Promise) {
+	    _inherits(DdvRestFulApi, _api$Promise);
+	
 	    //构造函数
-	    constructor(fn){
+	    function DdvRestFulApi(fn) {
+	        _classCallCheck(this, DdvRestFulApi);
+	
+	        var _this2 = _possibleConstructorReturn(this, (DdvRestFulApi.__proto__ || Object.getPrototypeOf(DdvRestFulApi)).call(this, fn));
 	        //调用父类构造函数
-	        super(fn);
-	        fn = void 0 ;
+	
+	
+	        fn = void 0;
+	        return _this2;
 	    }
-	    headers(headers){
-			this._headers = this._headers || Object.create(null);
-	        Object.assign(this._headers, headers||Object.create(null));
-			return this;
-		}
-	    path(path){
-	        this._path = (path||'/').toString() ;
-	        return this;
-	    }
-	    method(method){
-	        this._method = (method || this._method || 'GET').toString().toUpperCase();
-	        return this;
-	    }
-	    sendData(data){
-			this._data = this._data || Object.create(null);
-	        Object.assign(this._data, data||Object.create(null));
-			return this;
-		}
-	    query(data){
-			this._query = this._query || Object.create(null);
-	        Object.assign(this._query, data||Object.create(null));
-			return this;
-		}
-	    req(req){
-	        this._req = req || this._req || null;
-	    }
-	    res(res){
-	        this._res = res || this._res || null;
-	    }
-	    context(context){
-	        if(context.req&&context.res){
-	            this.req(context.req);
-	            this.res(context.res);
-	        }else if(context.requests&&context.response){
-	            this.req(context.requests);
-	            this.res(context.response);
+	
+	    _createClass(DdvRestFulApi, [{
+	        key: 'headers',
+	        value: function headers(_headers) {
+	            this._headers = this._headers || Object.create(null);
+	            Object.assign(this._headers, _headers || Object.create(null));
+	            return this;
 	        }
-		}
-	    _apiDestroy(){
-	        api.nextTick.call(this, function(){
-	            var key;
-	        	for (key in this) {
-	        		if (!Object.hasOwnProperty.call(this,key)) continue;
-	        		delete this[key];
-	        	}
-	            key = void 0;
-	        });
-	    }
-	};
+	    }, {
+	        key: 'path',
+	        value: function path(_path) {
+	            this._path = (_path || '/').toString();
+	            return this;
+	        }
+	    }, {
+	        key: 'method',
+	        value: function method(_method) {
+	            this._method = (_method || this._method || 'GET').toString().toUpperCase();
+	            return this;
+	        }
+	    }, {
+	        key: 'sendData',
+	        value: function sendData(data) {
+	            this._data = this._data || Object.create(null);
+	            Object.assign(this._data, data || Object.create(null));
+	            return this;
+	        }
+	    }, {
+	        key: 'query',
+	        value: function query(data) {
+	            this._query = this._query || Object.create(null);
+	            Object.assign(this._query, data || Object.create(null));
+	            return this;
+	        }
+	    }, {
+	        key: 'req',
+	        value: function req(_req) {
+	            this._req = _req || this._req || null;
+	        }
+	    }, {
+	        key: 'res',
+	        value: function res(_res) {
+	            this._res = _res || this._res || null;
+	        }
+	    }, {
+	        key: 'context',
+	        value: function context(_context) {
+	            if (_context.req && _context.res) {
+	                this.req(_context.req);
+	                this.res(_context.res);
+	            } else if (_context.requests && _context.response) {
+	                this.req(_context.requests);
+	                this.res(_context.response);
+	            }
+	        }
+	    }, {
+	        key: '_apiDestroy',
+	        value: function _apiDestroy() {
+	            api.nextTick.call(this, function () {
+	                var key;
+	                for (key in this) {
+	                    if (!Object.hasOwnProperty.call(this, key)) continue;
+	                    delete this[key];
+	                }
+	                key = void 0;
+	            });
+	        }
+	    }]);
+	
+	    return DdvRestFulApi;
+	}(api.Promise);
 	//发送别名
 	api.Api.prototype.send = api.Api.prototype.sendData;
 	//成功别名
@@ -262,21 +311,30 @@
 	//失败别名
 	api.Api.prototype.fail = api.Api.prototype.catch;
 	//自定义错误类型
-	api.ApiError = class ApiError extends Error{
+	api.ApiError = function (_Error) {
+	    _inherits(ApiError, _Error);
+	
 	    //构造函数
-	    constructor(message, stack){
+	    function ApiError(message, stack) {
+	        _classCallCheck(this, ApiError);
+	
+	        var _this3 = _possibleConstructorReturn(this, (ApiError.__proto__ || Object.getPrototypeOf(ApiError)).call(this, message));
 	        //调用父类构造函数
-	        super(message);
+	
+	
 	        message = message || 'Unknow Error';
-	        this.name = this.name||'Error';
-	        this.type = this.type||'ApiError';
-	        this.error_id = this.error_id||'UNKNOW_ERROR';
-	        this.stack += stack?('\n'+stack):'';
-	        message = stack = void 0 ;
+	        _this3.name = _this3.name || 'Error';
+	        _this3.type = _this3.type || 'ApiError';
+	        _this3.error_id = _this3.error_id || 'UNKNOW_ERROR';
+	        _this3.stack += stack ? '\n' + stack : '';
+	        message = stack = void 0;
+	        return _this3;
 	    }
-	};
+	
+	    return ApiError;
+	}(Error);
 	//下一进程访问
-	api.nextTick = function(fn){
+	api.nextTick = function (fn) {
 	    var _this = this;
 	    api.nextTickSys(function () {
 	        if (typeof fn === 'function') {
@@ -292,25 +350,25 @@
 	    }, 0);
 	};
 	api.nextTickQueue = [];
-	api.nextTickSys = (function(){
+	api.nextTickSys = function () {
 	    var fnc;
 	    if (typeof process != 'undefined' && typeof process.nextTick == 'function') {
 	        fnc = process.nextTick;
-	    }else{
-	        'r webkitR mozR msR oR'.split(' ').forEach(function(prefixes) {
+	    } else {
+	        'r webkitR mozR msR oR'.split(' ').forEach(function (prefixes) {
 	            if (typeof fnc === 'function') {
 	                return false;
 	            }
 	            fnc = window[prefixes + 'equestAnimationFrame'];
-	        })
-	        fnc = (fnc && fnc.bind && fnc.bind(window)) || window.setImmediate;
+	        });
+	        fnc = fnc && fnc.bind && fnc.bind(window) || window.setImmediate;
 	        if (typeof fnc !== 'function') {
 	            if (typeof window == 'undefined' || window.ActiveXObject || !window.postMessage) {
-	                fnc = function(f) {
-	                    setTimeout(f,0);
+	                fnc = function fnc(f) {
+	                    setTimeout(f, 0);
 	                };
 	            } else {
-	                window.addEventListener('message', function() {
+	                window.addEventListener('message', function () {
 	                    var i = 0;
 	                    while (i < api.nextTickQueue.length) {
 	                        try {
@@ -323,7 +381,7 @@
 	                    }
 	                    api.nextTickQueue.length = 0;
 	                }, true);
-	                fnc = function(fn) {
+	                fnc = function fnc(fn) {
 	                    if (!api.nextTickQueue.length) {
 	                        window.postMessage('nextTick!', '*');
 	                    }
@@ -333,11 +391,10 @@
 	        }
 	    }
 	    return fnc;
-	}());
-	if(typeof window !=='undefined'&&window.window === window){
+	}();
+	if (typeof window !== 'undefined' && window.window === window) {
 	    window.ddvRestFulApi = api;
 	}
-	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
@@ -530,7 +587,17 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	module.exports = (function() {
+	"use strict";
+	
+	module.exports = Promise;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = function () {
 		function _t() {
 			return new RegExp(/(.*?)\.?([^\.]*?)\.?(com|net|org|biz|ws|in|me|co\.uk|co|org\.uk|ltd\.uk|plc\.uk|me\.uk|edu|mil|br\.com|cn\.com|eu\.com|hu\.com|no\.com|qc\.com|sa\.com|se\.com|se\.net|us\.com|uy\.com|ac|co\.ac|gv\.ac|or\.ac|ac\.ac|af|am|as|at|ac\.at|co\.at|gv\.at|or\.at|asn\.au|com\.au|edu\.au|org\.au|net\.au|id\.au|be|ac\.be|adm\.br|adv\.br|am\.br|arq\.br|art\.br|bio\.br|cng\.br|cnt\.br|com\.br|ecn\.br|eng\.br|esp\.br|etc\.br|eti\.br|fm\.br|fot\.br|fst\.br|g12\.br|gov\.br|ind\.br|inf\.br|jor\.br|lel\.br|med\.br|mil\.br|net\.br|nom\.br|ntr\.br|odo\.br|org\.br|ppg\.br|pro\.br|psc\.br|psi\.br|rec\.br|slg\.br|tmp\.br|tur\.br|tv\.br|vet\.br|zlg\.br|br|ab\.ca|bc\.ca|mb\.ca|nb\.ca|nf\.ca|ns\.ca|nt\.ca|on\.ca|pe\.ca|qc\.ca|sk\.ca|yk\.ca|ca|cc|ac\.cn|com\.cn|edu\.cn|gov\.cn|org\.cn|bj\.cn|sh\.cn|tj\.cn|cq\.cn|he\.cn|nm\.cn|ln\.cn|jl\.cn|hl\.cn|js\.cn|zj\.cn|ah\.cn|gd\.cn|gx\.cn|hi\.cn|sc\.cn|gz\.cn|yn\.cn|xz\.cn|sn\.cn|gs\.cn|qh\.cn|nx\.cn|xj\.cn|tw\.cn|hk\.cn|mo\.cn|cn|cx|cz|de|dk|fo|com\.ec|tm\.fr|com\.fr|asso\.fr|presse\.fr|fr|gf|gs|co\.il|net\.il|ac\.il|k12\.il|gov\.il|muni\.il|ac\.in|co\.in|org\.in|ernet\.in|gov\.in|net\.in|res\.in|is|it|ac\.jp|co\.jp|go\.jp|or\.jp|ne\.jp|ac\.kr|co\.kr|go\.kr|ne\.kr|nm\.kr|or\.kr|li|lt|lu|asso\.mc|tm\.mc|com\.mm|org\.mm|net\.mm|edu\.mm|gov\.mm|ms|nl|no|nu|pl|ro|org\.ro|store\.ro|tm\.ro|firm\.ro|www\.ro|arts\.ro|rec\.ro|info\.ro|nom\.ro|nt\.ro|se|si|com\.sg|org\.sg|net\.sg|gov\.sg|sk|st|tf|ac\.th|co\.th|go\.th|mi\.th|net\.th|or\.th|tm|to|com\.tr|edu\.tr|gov\.tr|k12\.tr|net\.tr|org\.tr|com\.tw|org\.tw|net\.tw|ac\.uk|uk\.com|uk\.net|gb\.com|gb\.net|vg|sh|kz|ch|info|ua|gov|name|pro|ie|hk|com\.hk|org\.hk|net\.hk|edu\.hk|us|tk|cd|by|ad|lv|eu\.lv|bz|es|jp|cl|ag|mobi|eu|co\.nz|org\.nz|net\.nz|maori\.nz|iwi\.nz|io|la|md|sc|sg|vc|tw|travel|my|se|tv|pt|com\.pt|edu\.pt|asia|fi|com\.ve|net\.ve|fi|org\.ve|web\.ve|info\.ve|co\.ve|tel|im|gr|ru|net\.ru|org\.ru|hr|com\.hr|ly|xyz|so)$/);
 		}
@@ -541,9 +608,11 @@
 	
 		function _i(arg, str) {
 			var sptr = arg.charAt(0),
-				split = str.split(sptr);
+			    split = str.split(sptr);
 	
-			if (sptr === arg) { return split; }
+			if (sptr === arg) {
+				return split;
+			}
 	
 			arg = parseInt(arg.substring(1), 10);
 	
@@ -552,17 +621,17 @@
 	
 		function _f(arg, str) {
 			var sptr = arg.charAt(0),
-				split = str.split('&'),
-				field = [],
-				params = {},
-				tmp = [],
-				arg2 = arg.substring(1);
+			    split = str.split('&'),
+			    field = [],
+			    params = {},
+			    tmp = [],
+			    arg2 = arg.substring(1);
 	
 			for (var i = 0, ii = split.length; i < ii; i++) {
 				field = split[i].match(/(.*?)=(.*)/);
 	
 				// TODO: regex should be able to handle this.
-				if ( ! field) {
+				if (!field) {
 					field = [split[i], split[i], ''];
 				}
 	
@@ -570,7 +639,9 @@
 					field[2] = _d(field[2] || '');
 	
 					// If we have a match just return it right away.
-					if (arg2 === field[1]) { return field[2]; }
+					if (arg2 === field[1]) {
+						return field[2];
+					}
 	
 					// Check for array pattern.
 					tmp = field[1].match(/(.*)\[([0-9]+)\]/);
@@ -579,66 +650,76 @@
 						params[tmp[1]] = params[tmp[1]] || [];
 	
 						params[tmp[1]][tmp[2]] = field[2];
-					}
-					else {
+					} else {
 						params[field[1]] = field[2];
 					}
 				}
 			}
 	
-			if (sptr === arg) { return params; }
+			if (sptr === arg) {
+				return params;
+			}
 	
 			return params[arg2];
 		}
 	
-		return function(arg, url) {
-			var _l = {}, tmp, tmp2;
+		return function (arg, url) {
+			var _l = {},
+			    tmp,
+			    tmp2;
 	
-			if (arg === 'tld?') { return _t(); }
+			if (arg === 'tld?') {
+				return _t();
+			}
 	
-			url = url || ((typeof window !== 'undefined'&&window.location)||'').toString();
+			url = url || (typeof window !== 'undefined' && window.location || '').toString();
 	
-			if ( ! arg) { return url; }
+			if (!arg) {
+				return url;
+			}
 	
 			arg = arg.toString();
 	
-			if ((tmp = url.match(/^mailto:([^\/].+)/))) {
+			if (tmp = url.match(/^mailto:([^\/].+)/)) {
 				_l.protocol = 'mailto';
 				_l.email = tmp[1];
-			}
-			else {
+			} else {
 	
 				// Ignore Hashbangs.
-				if ((tmp = url.match(/(.*?)\/#\!(.*)/))) {
+				if (tmp = url.match(/(.*?)\/#\!(.*)/)) {
 					url = tmp[1] + tmp[2];
 				}
 	
 				// Hash.
-				if ((tmp = url.match(/(.*?)#(.*)/))) {
+				if (tmp = url.match(/(.*?)#(.*)/)) {
 					_l.hash = tmp[2];
 					url = tmp[1];
 				}
 	
 				// Return hash parts.
-				if (_l.hash && arg.match(/^#/)) { return _f(arg, _l.hash); }
+				if (_l.hash && arg.match(/^#/)) {
+					return _f(arg, _l.hash);
+				}
 	
 				// Query
-				if ((tmp = url.match(/(.*?)\?(.*)/))) {
+				if (tmp = url.match(/(.*?)\?(.*)/)) {
 					_l.query = tmp[2];
 					url = tmp[1];
 				}
 	
 				// Return query parts.
-				if (_l.query && arg.match(/^\?/)) { return _f(arg, _l.query); }
+				if (_l.query && arg.match(/^\?/)) {
+					return _f(arg, _l.query);
+				}
 	
 				// Protocol.
-				if ((tmp = url.match(/(.*?)\:?\/\/(.*)/))) {
+				if (tmp = url.match(/(.*?)\:?\/\/(.*)/)) {
 					_l.protocol = tmp[1].toLowerCase();
 					url = tmp[2];
 				}
 	
 				// Path.
-				if ((tmp = url.match(/(.*?)(\/.*)/))) {
+				if (tmp = url.match(/(.*?)(\/.*)/)) {
 					_l.path = tmp[2];
 					url = tmp[1];
 				}
@@ -647,8 +728,12 @@
 				_l.path = (_l.path || '').replace(/^([^\/])/, '/$1').replace(/\/$/, '');
 	
 				// Return path parts.
-				if (arg.match(/^[\-0-9]+$/)) { arg = arg.replace(/^([^\/])/, '/$1'); }
-				if (arg.match(/^\//)) { return _i(arg, _l.path.substring(1)); }
+				if (arg.match(/^[\-0-9]+$/)) {
+					arg = arg.replace(/^([^\/])/, '/$1');
+				}
+				if (arg.match(/^\//)) {
+					return _i(arg, _l.path.substring(1));
+				}
 	
 				// File.
 				tmp = _i('/-1', _l.path.substring(1));
@@ -660,13 +745,13 @@
 				}
 	
 				// Port.
-				if ((tmp = url.match(/(.*)\:([0-9]+)$/))) {
+				if (tmp = url.match(/(.*)\:([0-9]+)$/)) {
 					_l.port = tmp[2];
 					url = tmp[1];
 				}
 	
 				// Auth.
-				if ((tmp = url.match(/(.*?)@(.*)/))) {
+				if (tmp = url.match(/(.*?)@(.*)/)) {
 					_l.auth = tmp[1];
 					url = tmp[2];
 				}
@@ -683,7 +768,9 @@
 				_l.hostname = url.toLowerCase();
 	
 				// Return hostname parts.
-				if (arg.charAt(0) === '.') { return _i(arg, _l.hostname); }
+				if (arg.charAt(0) === '.') {
+					return _i(arg, _l.hostname);
+				}
 	
 				// Domain, tld and sub domain.
 				if (_t()) {
@@ -699,40 +786,52 @@
 				// Set port and protocol defaults if not set.
 				_l.port = _l.port || (_l.protocol === 'https' ? '443' : '80');
 				_l.protocol = _l.protocol || (_l.port === '443' ? 'https' : 'http');
-				_l.protocol = _l.protocol+':';
+				_l.protocol = _l.protocol + ':';
 			}
 	
 			// Return arg.
-			if (arg in _l) { return _l[arg]; }
+			if (arg in _l) {
+				return _l[arg];
+			}
 	
 			// Return everything.
-			if (arg === '{}') { return _l; }
+			if (arg === '{}') {
+				return _l;
+			}
 	
 			// Default to undefined for no match.
 			return undefined;
 		};
-	})();
-
+	}();
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	const request = module.exports = function request(o, callback) {
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var request = module.exports = function request(o, callback) {
 	    return new request.Request(o, callback);
 	};
-	const http = __webpack_require__(5);
-	const https = __webpack_require__(45);
-	const url = __webpack_require__(3);
-	const sign = __webpack_require__(46);
-	const api = __webpack_require__(1);
-	const session = __webpack_require__(47);
-	const Promise = api.Promise ;
-	const Request = request.Request = class ddvRequest {
-	    constructor(o, callback) {
+	var http = __webpack_require__(6);
+	var https = __webpack_require__(46);
+	var url = __webpack_require__(4);
+	var sign = __webpack_require__(47);
+	var api = __webpack_require__(1);
+	var session = __webpack_require__(48);
+	var Promise = api.Promise;
+	var Request = request.Request = function () {
+	    function ddvRequest(o, callback) {
+	        _classCallCheck(this, ddvRequest);
+	
 	        //回调
-	        this.callback = callback ;
+	        this.callback = callback;
 	        //基本参数初始化
 	        this._baseInit(o);
 	        //请求参数编码
@@ -740,121 +839,133 @@
 	        //开始运行
 	        this._run();
 	    }
-	    _baseInit(o){
-	        this.serverRes = Object.create(null);
-	        this.serverRes.statusCode = 0;
-	        this.serverRes.status = 'UNKNOW_ERROR';
-	        this.serverRes.body = '';
-	        this.input_o = o ;
-	        this.method = o._method ||'GET' ;
-	        this.headers = o._headers || Object.create(null);
-	        this.data = o._data || Object.create(null);
-	        this.queryObject = o._query || Object.create(null);
-	        this.path = o._path || '/' ;
-	        this.path = (this.path.charAt(0)=='/'?'':'/') + this.path;
-	        this.query = (url('query',this.path)||'').toString();
-	        this.path = url('path',this.path)||'/';
-	        this.baseUrl = o._baseUrl || this.baseUrl || request.baseUrl || api.baseUrl || '';
 	
-	        this.req = o._req || null;
-	        this.res = o._res || null;
-	        this.isServerNode = this.req&&this.res&&true||false;
+	    _createClass(ddvRequest, [{
+	        key: '_baseInit',
+	        value: function _baseInit(o) {
+	            this.serverRes = Object.create(null);
+	            this.serverRes.statusCode = 0;
+	            this.serverRes.status = 'UNKNOW_ERROR';
+	            this.serverRes.body = '';
+	            this.input_o = o;
+	            this.method = o._method || 'GET';
+	            this.headers = o._headers || Object.create(null);
+	            this.data = o._data || Object.create(null);
+	            this.queryObject = o._query || Object.create(null);
+	            this.path = o._path || '/';
+	            this.path = (this.path.charAt(0) == '/' ? '' : '/') + this.path;
+	            this.query = (url('query', this.path) || '').toString();
+	            this.path = url('path', this.path) || '/';
+	            this.baseUrl = o._baseUrl || this.baseUrl || request.baseUrl || api.baseUrl || '';
 	
-	        this.host = url('hostname',this.baseUrl);
-	        this.port = url('port',this.baseUrl);
-	        this.protocol = url('protocol',this.baseUrl);
-	        this.request_id = this.request_id || request.createRequestId();
-	    }
-	    _buildParams(){
-	        var str;
-	        if (this.queryObject) {
-	            str = request.buildParams(this.queryObject, true);
-	            if (str) {
-	                this.query += (this.query.length>0?'&':'') + str;
+	            this.req = o._req || null;
+	            this.res = o._res || null;
+	            this.isServerNode = this.req && this.res && true || false;
+	
+	            this.host = url('hostname', this.baseUrl);
+	            this.port = url('port', this.baseUrl);
+	            this.protocol = url('protocol', this.baseUrl);
+	            this.request_id = this.request_id || request.createRequestId();
+	        }
+	    }, {
+	        key: '_buildParams',
+	        value: function _buildParams() {
+	            var str;
+	            if (this.queryObject) {
+	                str = request.buildParams(this.queryObject, true);
+	                if (str) {
+	                    this.query += (this.query.length > 0 ? '&' : '') + str;
+	                }
+	            }
+	            if (this.method === 'GET') {
+	                str = request.buildParams(this.data, true);
+	                if (str) {
+	                    this.query += (this.query.length > 0 ? '&' : '') + str;
+	                }
+	            } else {
+	                this.body = request.buildParams(this.data);
 	            }
 	        }
-	        if (this.method === 'GET') {
-	            str = request.buildParams(this.data, true);
-	            if (str) {
-	                this.query += (this.query.length>0?'&':'') + str;
-	            }
-	        }else{
-	            this.body = request.buildParams(this.data);
+	    }, {
+	        key: '_run',
+	        value: function _run() {
+	            var _this = this;
+	            //签名
+	            sign(this).then(function (o) {
+	                return request.runRequest(o);
+	            }).then(function (_this) {
+	                if (_this && _this.callback) {
+	                    _this.callback(null, _this);
+	                } else if (_this && _this.destroy) {
+	                    _this.destroy();
+	                }
+	                _this = _this.callback = void 0;
+	            }).catch(function (e) {
+	                if (_this && _this.callback) {
+	                    _this.callback(e, _this);
+	                } else if (_this && _this.destroy) {
+	                    _this.destroy();
+	                }
+	                _this = _this.callback = void 0;
+	            });
 	        }
-	    }
-	    _run(){
-	        var _this = this ;
-	        //签名
-	        sign(this).then(function(o){
-	            return request.runRequest(o);
-	        }).then(function(_this){
-	            if (_this&&_this.callback) {
-	                _this.callback(null, _this);
-	            }else if(_this&&_this.destroy){
-	                _this.destroy();
-	            }
-	            _this = _this.callback = void 0;
-	        }).catch(function(e){
-	            if (_this&&_this.callback) {
-	                _this.callback(e, _this);
-	            }else if(_this&&_this.destroy){
-	                _this.destroy();
-	            }
-	            _this = _this.callback = void 0;
-	        });
-	    }
-	    destroy(){
-	        api.nextTick.call(this, function(){
-	            var key;
-	        	for (key in this) {
-	        		if (!Object.hasOwnProperty.call(this,key)) continue;
-	        		delete this[key];
-	        	}
-	            key = void 0;
-	        });
-	    }
-	}
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            api.nextTick.call(this, function () {
+	                var key;
+	                for (key in this) {
+	                    if (!Object.hasOwnProperty.call(this, key)) continue;
+	                    delete this[key];
+	                }
+	                key = void 0;
+	            });
+	        }
+	    }]);
+	
+	    return ddvRequest;
+	}();
 	//发送请求
-	request.runRequest = function runRequest(o){
-	    return request.runRequestHttp(o).then(function(){
+	request.runRequest = function runRequest(o) {
+	    return request.runRequestHttp(o).then(function () {
 	        var e;
 	        if (o.serverRes.statusCode >= '200' && o.serverRes.statusCode < '300') {
 	            return o;
-	        }else{
-	            e = new Error(o.serverRes.status)
-	            e.statusCode = o.serverRes.statusCode ;
-	            e.error_id = o.serverRes.status ;
-	            e.message = o.serverRes.status || 'Unknow Error' ;
+	        } else {
+	            e = new Error(o.serverRes.status);
+	            e.statusCode = o.serverRes.statusCode;
+	            e.error_id = o.serverRes.status;
+	            e.message = o.serverRes.status || 'Unknow Error';
 	            throw e;
 	        }
 	    });
-	}
+	};
 	//发送请求
-	request.runRequestHttp = function runRequestHttp(o){
-	    return new api.Promise(function(resolve, reject) {
+	request.runRequestHttp = function runRequestHttp(o) {
+	    return new api.Promise(function (resolve, reject) {
 	        var opt, req;
-	        if (!(o.isServerNode||session.isClientWindow)) {
+	        if (!(o.isServerNode || session.isClientWindow)) {
 	            //不是浏览器和node服务器
 	            reject(new Error('Neither a browser nor req and res'));
 	            return;
 	        }
 	        opt = {
-	            method: (o.method||'GET'),
-	            protocol: (o.protocol||'http:'),
+	            method: o.method || 'GET',
+	            protocol: o.protocol || 'http:',
 	            host: o.host,
-	            port: (o.port||'80'),
-	            path: (o.path||'/'),
+	            port: o.port || '80',
+	            path: o.path || '/',
 	            headers: o.headers
 	        };
 	        if (o.query) {
-	            opt.path += '?' + o.query ;
+	            opt.path += '?' + o.query;
 	        }
 	        //发送请求
-	        req = (opt.protocol==='http:'?http:https).request(opt, function(response){
+	        req = (opt.protocol === 'http:' ? http : https).request(opt, function (response) {
 	            o.serverRes.body = '';
-	            response.on('data', function(data){
+	            response.on('data', function (data) {
 	                o.serverRes.body += data;
-	            }).on('end',function(){
+	            }).on('end', function () {
 	                o.serverRes.statusCode = response.statusCode || 200;
 	                o.serverRes.status = response.statusMessage.toString() || 'UNKNOW_ERROR';
 	                o.serverRes.rawHeaders = response.rawHeaders || [];
@@ -865,24 +976,24 @@
 	        if (o.body) {
 	            req.write(o.body);
 	        }
-	        req.on('error',function(e){
+	        req.on('error', function (e) {
 	            reject(e);
 	        });
 	        req.end();
 	        opt = req = void 0;
-	    })
+	    });
 	};
 	
 	request.kEscapedMap = {
-	    '!' : '%21',
+	    '!': '%21',
 	    '\'': '%27',
-	    '(' : '%28',
-	    ')' : '%29',
-	    '*' : '%2A'
+	    '(': '%28',
+	    ')': '%29',
+	    '*': '%2A'
 	};
 	//path编码
-	request.urlEncodeExceptSlash=function(value){
-	    return request.urlEncode(value,false);
+	request.urlEncodeExceptSlash = function (value) {
+	    return request.urlEncode(value, false);
 	};
 	//编码
 	request.urlEncode = function (string, encodingSlash) {
@@ -899,22 +1010,26 @@
 	request.buildParams = function (data, isQuery) {
 	    var r = request._buildParams(data, '').join('&');
 	    if (isQuery) {
-	        r = r.replace( /%20/gi, '+' );
+	        r = r.replace(/%20/gi, '+');
 	    }
 	    return r;
 	};
 	request._buildParams = function (data, prefix) {
-	    var r = [], i, key, keyt, value;
-	    if (typeof data==='object') {
+	    var r = [],
+	        i,
+	        key,
+	        keyt,
+	        value;
+	    if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
 	        //数组
 	        if (Array.isArray(data)) {
 	            for (i = 0; i < data.length; i++) {
 	                //值
 	                value = data[i];
 	                //键
-	                keyt =  request._buildParamsAddPrefix(i, prefix, (typeof value==='object'));
+	                keyt = request._buildParamsAddPrefix(i, prefix, (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object');
 	                //递归处理对象和数组
-	                if (typeof value==='object') {
+	                if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
 	                    //插入数组
 	                    r.push.apply(r, request._buildParams(value, keyt));
 	                } else {
@@ -930,8 +1045,8 @@
 	                //值
 	                value = data[key];
 	                //键
-	                keyt =  request._buildParamsAddPrefix(key, prefix);
-	                if (typeof value==='object') {
+	                keyt = request._buildParamsAddPrefix(key, prefix);
+	                if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
 	                    //插入数组
 	                    r.push.apply(r, request._buildParams(value, keyt));
 	                } else {
@@ -945,73 +1060,73 @@
 	};
 	request._buildParamsAddPrefix = function (key, prefix, isNotArray) {
 	    if (prefix) {
-	        return prefix + '[' + (isNotArray!==false?key:'') + ']' ;
-	    }else{
+	        return prefix + '[' + (isNotArray !== false ? key : '') + ']';
+	    } else {
 	        return key;
 	    }
 	};
 	//生成请求id
-	const createRequestId = request.createRequestId = function createRequestId(){
-		var pid, t, rid, rid_len, rid_t, rid_new, i ;
-			//获取16进制的 pid
-			pid = Number(request.createNewPid(true)).toString(16);
-			//种子
-			rid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-			rid_new = '';
-			for (i = rid.length - 1; i >= 0; i--) {
-				rid_t = rid[i] ;
-				if (rid_t == 'x') {
-					rid_len = pid.length ;
-					rid_t = pid ? pid.charAt(rid_len-1):'x';
-					pid = pid.substr(0, rid_len-1);
-				}
-				rid_new = rid_t + rid_new;
-			}
-			rid = request.createGuid(rid_new);
-			i = rid_new = rid_t = rid_len = t = pid = undefined ;
-		return rid ;
+	var createRequestId = request.createRequestId = function createRequestId() {
+	    var pid, t, rid, rid_len, rid_t, rid_new, i;
+	    //获取16进制的 pid
+	    pid = Number(request.createNewPid(true)).toString(16);
+	    //种子
+	    rid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+	    rid_new = '';
+	    for (i = rid.length - 1; i >= 0; i--) {
+	        rid_t = rid[i];
+	        if (rid_t == 'x') {
+	            rid_len = pid.length;
+	            rid_t = pid ? pid.charAt(rid_len - 1) : 'x';
+	            pid = pid.substr(0, rid_len - 1);
+	        }
+	        rid_new = rid_t + rid_new;
+	    }
+	    rid = request.createGuid(rid_new);
+	    i = rid_new = rid_t = rid_len = t = pid = undefined;
+	    return rid;
 	};
-	var createNewidSumLast, createNewidTimeLast ;
-	createNewidSumLast = 0 ;
-	createNewidTimeLast = 0 ;
-	const createNewPid = request.createNewPid = function createNewid(is_10) {
-	    var r ;
-	        if (createNewidTimeLast!==request.time()) {
-	            createNewidTimeLast = request.time() ;
-	            createNewidSumLast = 0 ;
-	        }
-	        r = createNewidTimeLast.toString() + (++createNewidSumLast).toString();
-	        //使用36进制
-	        if (!is_10) {
-	            r = parseInt(r,10).toString(36);
-	        }
-	        return r ;
+	var createNewidSumLast, createNewidTimeLast;
+	createNewidSumLast = 0;
+	createNewidTimeLast = 0;
+	var createNewPid = request.createNewPid = function createNewid(is_10) {
+	    var r;
+	    if (createNewidTimeLast !== request.time()) {
+	        createNewidTimeLast = request.time();
+	        createNewidSumLast = 0;
+	    }
+	    r = createNewidTimeLast.toString() + (++createNewidSumLast).toString();
+	    //使用36进制
+	    if (!is_10) {
+	        r = parseInt(r, 10).toString(36);
+	    }
+	    return r;
 	};
 	//生成guid
-	const createGuid = request.createGuid = function createGuid(s) {
-	    return (s||'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx').replace(/[xy]/g, function(c) {
-	        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+	var createGuid = request.createGuid = function createGuid(s) {
+	    return (s || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx').replace(/[xy]/g, function (c) {
+	        var r = Math.random() * 16 | 0,
+	            v = c == 'x' ? r : r & 0x3 | 0x8;
 	        return v.toString(16);
 	    });
 	};
 	//获取当前时间开始
-	const now = request.now = function now() {
-	    return (new Date()).getTime();
+	var now = request.now = function now() {
+	    return new Date().getTime();
 	};
 	//获取php的时间戳
-	const time = request.time = function time() {
-	    return parseInt(request.now()/1000);
+	var time = request.time = function time() {
+	    return parseInt(request.now() / 1000);
 	};
 
-
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(6)
-	var extend = __webpack_require__(36)
-	var statusCodes = __webpack_require__(37)
-	var url = __webpack_require__(38)
+	/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(7)
+	var extend = __webpack_require__(37)
+	var statusCodes = __webpack_require__(38)
+	var url = __webpack_require__(39)
 	
 	var http = exports
 	
@@ -1090,14 +1205,14 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(11)
-	var inherits = __webpack_require__(12)
-	var response = __webpack_require__(13)
-	var stream = __webpack_require__(14)
-	var toArrayBuffer = __webpack_require__(35)
+	/* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(12)
+	var inherits = __webpack_require__(13)
+	var response = __webpack_require__(14)
+	var stream = __webpack_require__(15)
+	var toArrayBuffer = __webpack_require__(36)
 	
 	var IncomingMessage = response.IncomingMessage
 	var rStates = response.readyStates
@@ -1388,10 +1503,10 @@
 		'via'
 	]
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7).Buffer, (function() { return this; }()), __webpack_require__(2)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer, (function() { return this; }()), __webpack_require__(2)))
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -1404,9 +1519,9 @@
 	
 	'use strict'
 	
-	var base64 = __webpack_require__(8)
-	var ieee754 = __webpack_require__(9)
-	var isArray = __webpack_require__(10)
+	var base64 = __webpack_require__(9)
+	var ieee754 = __webpack_require__(10)
+	var isArray = __webpack_require__(11)
 	
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -3187,7 +3302,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict'
@@ -3307,7 +3422,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -3397,7 +3512,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
@@ -3408,7 +3523,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
@@ -3419,21 +3534,33 @@
 		exports.blobConstructor = true
 	} catch (e) {}
 	
-	// Service workers don't have XHR
-	var xhr = null
-	if (global.XMLHttpRequest) {
-		xhr = new global.XMLHttpRequest()
-		// If XDomainRequest is available (ie only, where xhr might not work
-		// cross domain), use the page location. Otherwise use example.com
-		// Note: this doesn't actually make an http request.
-		try {
-			xhr.open('GET', global.XDomainRequest ? '/' : 'https://example.com')
-		} catch(e) {
+	// The xhr request to example.com may violate some restrictive CSP configurations,
+	// so if we're running in a browser that supports `fetch`, avoid calling getXHR()
+	// and assume support for certain features below.
+	var xhr
+	function getXHR () {
+		// Cache the xhr value
+		if (xhr !== undefined) return xhr
+	
+		if (global.XMLHttpRequest) {
+			xhr = new global.XMLHttpRequest()
+			// If XDomainRequest is available (ie only, where xhr might not work
+			// cross domain), use the page location. Otherwise use example.com
+			// Note: this doesn't actually make an http request.
+			try {
+				xhr.open('GET', global.XDomainRequest ? '/' : 'https://example.com')
+			} catch(e) {
+				xhr = null
+			}
+		} else {
+			// Service workers don't have XHR
 			xhr = null
 		}
+		return xhr
 	}
 	
 	function checkTypeSupport (type) {
+		var xhr = getXHR()
 		if (!xhr) return false
 		try {
 			xhr.responseType = type
@@ -3447,13 +3574,20 @@
 	var haveArrayBuffer = typeof global.ArrayBuffer !== 'undefined'
 	var haveSlice = haveArrayBuffer && isFunction(global.ArrayBuffer.prototype.slice)
 	
-	exports.arraybuffer = haveArrayBuffer && checkTypeSupport('arraybuffer')
+	// If fetch is supported, then arraybuffer will be supported too. Skip calling
+	// checkTypeSupport(), since that calls getXHR().
+	exports.arraybuffer = exports.fetch || (haveArrayBuffer && checkTypeSupport('arraybuffer'))
+	
 	// These next two tests unavoidably show warnings in Chrome. Since fetch will always
 	// be used if it's available, just return false for these to avoid the warnings.
 	exports.msstream = !exports.fetch && haveSlice && checkTypeSupport('ms-stream')
 	exports.mozchunkedarraybuffer = !exports.fetch && haveArrayBuffer &&
 		checkTypeSupport('moz-chunked-arraybuffer')
-	exports.overrideMimeType = xhr ? isFunction(xhr.overrideMimeType) : false
+	
+	// If fetch is supported, then overrideMimeType will be supported too. Skip calling
+	// getXHR().
+	exports.overrideMimeType = exports.fetch || (getXHR() ? isFunction(getXHR().overrideMimeType) : false)
+	
 	exports.vbArray = isFunction(global.VBArray)
 	
 	function isFunction (value) {
@@ -3465,7 +3599,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -3494,12 +3628,12 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(11)
-	var inherits = __webpack_require__(12)
-	var stream = __webpack_require__(14)
+	/* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(12)
+	var inherits = __webpack_require__(13)
+	var stream = __webpack_require__(15)
 	
 	var rStates = exports.readyStates = {
 		UNSENT: 0,
@@ -3680,24 +3814,24 @@
 		}
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(7).Buffer, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(8).Buffer, (function() { return this; }())))
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {var Stream = (function (){
 	  try {
-	    return __webpack_require__(15); // hack to fix a circular dependency issue when used with browserify
+	    return __webpack_require__(16); // hack to fix a circular dependency issue when used with browserify
 	  } catch(_){}
 	}());
-	exports = module.exports = __webpack_require__(26);
+	exports = module.exports = __webpack_require__(27);
 	exports.Stream = Stream || exports;
 	exports.Readable = exports;
-	exports.Writable = __webpack_require__(18);
-	exports.Duplex = __webpack_require__(25);
-	exports.Transform = __webpack_require__(32);
-	exports.PassThrough = __webpack_require__(34);
+	exports.Writable = __webpack_require__(19);
+	exports.Duplex = __webpack_require__(26);
+	exports.Transform = __webpack_require__(33);
+	exports.PassThrough = __webpack_require__(35);
 	
 	if (!process.browser && process.env.READABLE_STREAM === 'disable' && Stream) {
 	  module.exports = Stream;
@@ -3706,7 +3840,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -3732,15 +3866,15 @@
 	
 	module.exports = Stream;
 	
-	var EE = __webpack_require__(16).EventEmitter;
-	var inherits = __webpack_require__(12);
+	var EE = __webpack_require__(17).EventEmitter;
+	var inherits = __webpack_require__(13);
 	
 	inherits(Stream, EE);
-	Stream.Readable = __webpack_require__(14);
-	Stream.Writable = __webpack_require__(17);
-	Stream.Duplex = __webpack_require__(30);
-	Stream.Transform = __webpack_require__(31);
-	Stream.PassThrough = __webpack_require__(33);
+	Stream.Readable = __webpack_require__(15);
+	Stream.Writable = __webpack_require__(18);
+	Stream.Duplex = __webpack_require__(31);
+	Stream.Transform = __webpack_require__(32);
+	Stream.PassThrough = __webpack_require__(34);
 	
 	// Backwards-compat with node 0.4.x
 	Stream.Stream = Stream;
@@ -3839,7 +3973,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -4147,14 +4281,14 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(18)
+	module.exports = __webpack_require__(19)
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, setImmediate) {// A bit simpler than readable streams.
@@ -4166,7 +4300,7 @@
 	module.exports = Writable;
 	
 	/*<replacement>*/
-	var processNextTick = __webpack_require__(21);
+	var processNextTick = __webpack_require__(22);
 	/*</replacement>*/
 	
 	/*<replacement>*/
@@ -4180,13 +4314,13 @@
 	Writable.WritableState = WritableState;
 	
 	/*<replacement>*/
-	var util = __webpack_require__(22);
-	util.inherits = __webpack_require__(12);
+	var util = __webpack_require__(23);
+	util.inherits = __webpack_require__(13);
 	/*</replacement>*/
 	
 	/*<replacement>*/
 	var internalUtil = {
-	  deprecate: __webpack_require__(23)
+	  deprecate: __webpack_require__(24)
 	};
 	/*</replacement>*/
 	
@@ -4194,16 +4328,16 @@
 	var Stream;
 	(function () {
 	  try {
-	    Stream = __webpack_require__(15);
+	    Stream = __webpack_require__(16);
 	  } catch (_) {} finally {
-	    if (!Stream) Stream = __webpack_require__(16).EventEmitter;
+	    if (!Stream) Stream = __webpack_require__(17).EventEmitter;
 	  }
 	})();
 	/*</replacement>*/
 	
-	var Buffer = __webpack_require__(7).Buffer;
+	var Buffer = __webpack_require__(8).Buffer;
 	/*<replacement>*/
-	var bufferShim = __webpack_require__(24);
+	var bufferShim = __webpack_require__(25);
 	/*</replacement>*/
 	
 	util.inherits(Writable, Stream);
@@ -4218,7 +4352,7 @@
 	}
 	
 	function WritableState(options, stream) {
-	  Duplex = Duplex || __webpack_require__(25);
+	  Duplex = Duplex || __webpack_require__(26);
 	
 	  options = options || {};
 	
@@ -4352,7 +4486,7 @@
 	}
 	
 	function Writable(options) {
-	  Duplex = Duplex || __webpack_require__(25);
+	  Duplex = Duplex || __webpack_require__(26);
 	
 	  // Writable ctor is applied to Duplexes, too.
 	  // `realHasInstance` is necessary because using plain `instanceof`
@@ -4711,10 +4845,10 @@
 	    }
 	  };
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(19).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(20).setImmediate))
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var apply = Function.prototype.apply;
@@ -4767,13 +4901,13 @@
 	};
 	
 	// setimmediate attaches itself to the global object
-	__webpack_require__(20);
+	__webpack_require__(21);
 	exports.setImmediate = setImmediate;
 	exports.clearImmediate = clearImmediate;
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -4966,7 +5100,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(2)))
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -5016,7 +5150,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {// Copyright Joyent, Inc. and other Node contributors.
@@ -5127,10 +5261,10 @@
 	  return Object.prototype.toString.call(o);
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer))
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -5204,12 +5338,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 	
-	var buffer = __webpack_require__(7);
+	var buffer = __webpack_require__(8);
 	var Buffer = buffer.Buffer;
 	var SlowBuffer = buffer.SlowBuffer;
 	var MAX_LEN = buffer.kMaxLength || 2147483647;
@@ -5319,7 +5453,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// a duplex stream is just a stream that is both readable and writable.
@@ -5342,16 +5476,16 @@
 	module.exports = Duplex;
 	
 	/*<replacement>*/
-	var processNextTick = __webpack_require__(21);
+	var processNextTick = __webpack_require__(22);
 	/*</replacement>*/
 	
 	/*<replacement>*/
-	var util = __webpack_require__(22);
-	util.inherits = __webpack_require__(12);
+	var util = __webpack_require__(23);
+	util.inherits = __webpack_require__(13);
 	/*</replacement>*/
 	
-	var Readable = __webpack_require__(26);
-	var Writable = __webpack_require__(18);
+	var Readable = __webpack_require__(27);
+	var Writable = __webpack_require__(19);
 	
 	util.inherits(Duplex, Readable);
 	
@@ -5399,7 +5533,7 @@
 	}
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -5407,11 +5541,11 @@
 	module.exports = Readable;
 	
 	/*<replacement>*/
-	var processNextTick = __webpack_require__(21);
+	var processNextTick = __webpack_require__(22);
 	/*</replacement>*/
 	
 	/*<replacement>*/
-	var isArray = __webpack_require__(10);
+	var isArray = __webpack_require__(11);
 	/*</replacement>*/
 	
 	/*<replacement>*/
@@ -5421,7 +5555,7 @@
 	Readable.ReadableState = ReadableState;
 	
 	/*<replacement>*/
-	var EE = __webpack_require__(16).EventEmitter;
+	var EE = __webpack_require__(17).EventEmitter;
 	
 	var EElistenerCount = function (emitter, type) {
 	  return emitter.listeners(type).length;
@@ -5432,25 +5566,25 @@
 	var Stream;
 	(function () {
 	  try {
-	    Stream = __webpack_require__(15);
+	    Stream = __webpack_require__(16);
 	  } catch (_) {} finally {
-	    if (!Stream) Stream = __webpack_require__(16).EventEmitter;
+	    if (!Stream) Stream = __webpack_require__(17).EventEmitter;
 	  }
 	})();
 	/*</replacement>*/
 	
-	var Buffer = __webpack_require__(7).Buffer;
+	var Buffer = __webpack_require__(8).Buffer;
 	/*<replacement>*/
-	var bufferShim = __webpack_require__(24);
+	var bufferShim = __webpack_require__(25);
 	/*</replacement>*/
 	
 	/*<replacement>*/
-	var util = __webpack_require__(22);
-	util.inherits = __webpack_require__(12);
+	var util = __webpack_require__(23);
+	util.inherits = __webpack_require__(13);
 	/*</replacement>*/
 	
 	/*<replacement>*/
-	var debugUtil = __webpack_require__(27);
+	var debugUtil = __webpack_require__(28);
 	var debug = void 0;
 	if (debugUtil && debugUtil.debuglog) {
 	  debug = debugUtil.debuglog('stream');
@@ -5459,7 +5593,7 @@
 	}
 	/*</replacement>*/
 	
-	var BufferList = __webpack_require__(28);
+	var BufferList = __webpack_require__(29);
 	var StringDecoder;
 	
 	util.inherits(Readable, Stream);
@@ -5479,7 +5613,7 @@
 	}
 	
 	function ReadableState(options, stream) {
-	  Duplex = Duplex || __webpack_require__(25);
+	  Duplex = Duplex || __webpack_require__(26);
 	
 	  options = options || {};
 	
@@ -5541,14 +5675,14 @@
 	  this.decoder = null;
 	  this.encoding = null;
 	  if (options.encoding) {
-	    if (!StringDecoder) StringDecoder = __webpack_require__(29).StringDecoder;
+	    if (!StringDecoder) StringDecoder = __webpack_require__(30).StringDecoder;
 	    this.decoder = new StringDecoder(options.encoding);
 	    this.encoding = options.encoding;
 	  }
 	}
 	
 	function Readable(options) {
-	  Duplex = Duplex || __webpack_require__(25);
+	  Duplex = Duplex || __webpack_require__(26);
 	
 	  if (!(this instanceof Readable)) return new Readable(options);
 	
@@ -5651,7 +5785,7 @@
 	
 	// backwards compatibility.
 	Readable.prototype.setEncoding = function (enc) {
-	  if (!StringDecoder) StringDecoder = __webpack_require__(29).StringDecoder;
+	  if (!StringDecoder) StringDecoder = __webpack_require__(30).StringDecoder;
 	  this._readableState.decoder = new StringDecoder(enc);
 	  this._readableState.encoding = enc;
 	  return this;
@@ -6346,20 +6480,20 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Buffer = __webpack_require__(7).Buffer;
+	var Buffer = __webpack_require__(8).Buffer;
 	/*<replacement>*/
-	var bufferShim = __webpack_require__(24);
+	var bufferShim = __webpack_require__(25);
 	/*</replacement>*/
 	
 	module.exports = BufferList;
@@ -6421,7 +6555,7 @@
 	};
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -6445,7 +6579,7 @@
 	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 	// USE OR OTHER DEALINGS IN THE SOFTWARE.
 	
-	var Buffer = __webpack_require__(7).Buffer;
+	var Buffer = __webpack_require__(8).Buffer;
 	
 	var isBufferEncoding = Buffer.isEncoding
 	  || function(encoding) {
@@ -6648,21 +6782,21 @@
 
 
 /***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(25)
-
-
-/***/ },
 /* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(32)
+	module.exports = __webpack_require__(26)
 
 
 /***/ },
 /* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(33)
+
+
+/***/ },
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// a transform stream is a readable/writable stream where you do
@@ -6711,11 +6845,11 @@
 	
 	module.exports = Transform;
 	
-	var Duplex = __webpack_require__(25);
+	var Duplex = __webpack_require__(26);
 	
 	/*<replacement>*/
-	var util = __webpack_require__(22);
-	util.inherits = __webpack_require__(12);
+	var util = __webpack_require__(23);
+	util.inherits = __webpack_require__(13);
 	/*</replacement>*/
 	
 	util.inherits(Transform, Duplex);
@@ -6849,14 +6983,14 @@
 	}
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(34)
+	module.exports = __webpack_require__(35)
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// a passthrough stream.
@@ -6867,11 +7001,11 @@
 	
 	module.exports = PassThrough;
 	
-	var Transform = __webpack_require__(32);
+	var Transform = __webpack_require__(33);
 	
 	/*<replacement>*/
-	var util = __webpack_require__(22);
-	util.inherits = __webpack_require__(12);
+	var util = __webpack_require__(23);
+	util.inherits = __webpack_require__(13);
 	/*</replacement>*/
 	
 	util.inherits(PassThrough, Transform);
@@ -6887,10 +7021,10 @@
 	};
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Buffer = __webpack_require__(7).Buffer
+	var Buffer = __webpack_require__(8).Buffer
 	
 	module.exports = function (buf) {
 		// If the buffer is backed by a Uint8Array, a faster version will work
@@ -6920,7 +7054,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	module.exports = extend
@@ -6945,7 +7079,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -7015,7 +7149,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -7041,8 +7175,8 @@
 	
 	'use strict';
 	
-	var punycode = __webpack_require__(39);
-	var util = __webpack_require__(41);
+	var punycode = __webpack_require__(40);
+	var util = __webpack_require__(42);
 	
 	exports.parse = urlParse;
 	exports.resolve = urlResolve;
@@ -7117,7 +7251,7 @@
 	      'gopher:': true,
 	      'file:': true
 	    },
-	    querystring = __webpack_require__(42);
+	    querystring = __webpack_require__(43);
 	
 	function urlParse(url, parseQueryString, slashesDenoteHost) {
 	  if (url && util.isObject(url) && url instanceof Url) return url;
@@ -7753,7 +7887,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/punycode v1.3.2 by @mathias */
@@ -8285,10 +8419,10 @@
 	
 	}(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41)(module), (function() { return this; }())))
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -8304,7 +8438,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -8326,17 +8460,17 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	exports.decode = exports.parse = __webpack_require__(43);
-	exports.encode = exports.stringify = __webpack_require__(44);
+	exports.decode = exports.parse = __webpack_require__(44);
+	exports.encode = exports.stringify = __webpack_require__(45);
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -8422,7 +8556,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -8492,10 +8626,10 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var http = __webpack_require__(5);
+	var http = __webpack_require__(6);
 	
 	var https = module.exports;
 	
@@ -8512,341 +8646,348 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	//导出签名模块
-	const sign = module.exports = Object.assign(function sign(o){
-	    return sign._signRun(o);
-	},{
-	    headersPrefix: 'x-ddv-',
-	    excludeHeaderKeys: ['host','content-length','content-type','content-md5'],
-	    //签名头
-	    _signRun(o){
-	        return new api.Promise(function signInit(resolve, reject) {
-	            //base初始化
-	            sign._signRunBaseInit(o);
-	            //初始化GET参数
-	            sign._signRunQueryInit(o);
-	            //格式化头信息
-	            sign._signRunHeadersFormat(o);
-	            //签名头排序
-	            sign._signRunHeadersSort(o);
-	            //提交下一步
-	            resolve(o);
-	            o = void 0;
-	        }).then(function (o) {
-	            //获取校验过的session数据
-	            return session.getTrueData(o);
-	        }).then(function (o) {
-				//会话id
-				var sessionId = o.sessionData.session_id ;
-	            //会话秘钥
-				var sessionKey = o.sessionData.session_key||'session_key';
-	            //设备识别号
-				var sessionCard = o.sessionData.session_card ;
-	            //时间差
-				var differenceTime = o.sessionData.difference_time ;
 	
-				//授权字符串
-				o.Authorization = 'app-auth-v2'+'/'+o.request_id+'/'+sessionId+'/'+sessionCard+'/'+sign.getUTCServerTime(differenceTime)+'/'+'1800';
-				//生成临时秘钥-用于加密的key-防止丢失正式key
-	            var signingKey = sign.HmacSHA256(o.Authorization, sessionKey);
+	var sign = module.exports = Object.assign(function sign(o) {
+					return sign._signRun(o);
+	}, {
+					headersPrefix: 'x-ddv-',
+					excludeHeaderKeys: ['host', 'content-length', 'content-type', 'content-md5'],
+					//签名头
+					_signRun: function _signRun(o) {
+									return new api.Promise(function signInit(resolve, reject) {
+													//base初始化
+													sign._signRunBaseInit(o);
+													//初始化GET参数
+													sign._signRunQueryInit(o);
+													//格式化头信息
+													sign._signRunHeadersFormat(o);
+													//签名头排序
+													sign._signRunHeadersSort(o);
+													//提交下一步
+													resolve(o);
+													o = void 0;
+									}).then(function (o) {
+													//获取校验过的session数据
+													return session.getTrueData(o);
+									}).then(function (o) {
+													//会话id
+													var sessionId = o.sessionData.session_id;
+													//会话秘钥
+													var sessionKey = o.sessionData.session_key || 'session_key';
+													//设备识别号
+													var sessionCard = o.sessionData.session_card;
+													//时间差
+													var differenceTime = o.sessionData.difference_time;
 	
-	            //拼接内容
-				var canonicalRequest = o.method + o.n + request.urlEncodeExceptSlash(o.path) + o.n + o.query + o.n + o.authCanonicalHeadersStr;
-				//使用signKey和标准请求串完成签名
-				var sessionSign = sign.HmacSHA256(canonicalRequest, signingKey);
-				//组成最终签名串
-				o.Authorization += '/' + o.authHeadersStr + '/'+ sessionSign;
-	            //进入下一步
-	            return o;
-	        }).then(function(o){
-	            if (!o.headers) {
-	                o.headers = Object.create(null);
-	            }
-	            o.headers['Authorization'] = o.Authorization ;
-	            //回收数据
-	            delete o.authHeadersStr;
-	            delete o.authCanonicalHeadersStr;
-	            return o;
-	        });
-	    },
-	    //签名头排序
-	    _signRunHeadersSort(o){
-			//要签名的头的key的一个数组
-			o.authHeadersStr = [];
-			//签名的头
-			o.authCanonicalHeadersStr = [];
+													//授权字符串
+													o.Authorization = 'app-auth-v2' + '/' + o.request_id + '/' + sessionId + '/' + sessionCard + '/' + sign.getUTCServerTime(differenceTime) + '/' + '1800';
+													//生成临时秘钥-用于加密的key-防止丢失正式key
+													var signingKey = sign.HmacSHA256(o.Authorization, sessionKey);
 	
-			o.headersPrefix = o.headersPrefix || sign.headersPrefix || request.headersPrefix ;
-			o.headersPrefixLen = o.headersPrefix.length ;
-	        var keyLower, key, value, headersOld = o.headers ;
-	        for (key in headersOld) {
-	            if (!Object.hasOwnProperty.call(headersOld, key)) {
-	                continue;
-	            }
-	            //取得key对应的value
-	            value = headersOld[key];
-	            //小写的key
-	            keyLower = key.toLowerCase();
-	            //判断一下
-	            if (sign.excludeHeaderKeys.indexOf(keyLower)>-1||keyLower.substr(0,o.headersPrefixLen)==o.headersPrefix){
-	                o.authCanonicalHeadersStr.push( request.urlEncode(keyLower) +':'+ request.urlEncode(value));
-	                o.authHeadersStr.push( keyLower);
-	            }
+													//拼接内容
+													var canonicalRequest = o.method + o.n + request.urlEncodeExceptSlash(o.path) + o.n + o.query + o.n + o.authCanonicalHeadersStr;
+													//使用signKey和标准请求串完成签名
+													var sessionSign = sign.HmacSHA256(canonicalRequest, signingKey);
+													//组成最终签名串
+													o.Authorization += '/' + o.authHeadersStr + '/' + sessionSign;
+													//进入下一步
+													return o;
+									}).then(function (o) {
+													if (!o.headers) {
+																	o.headers = Object.create(null);
+													}
+													o.headers['Authorization'] = o.Authorization;
+													//回收数据
+													delete o.authHeadersStr;
+													delete o.authCanonicalHeadersStr;
+													return o;
+									});
+					},
 	
-	        }
+					//签名头排序
+					_signRunHeadersSort: function _signRunHeadersSort(o) {
+									//要签名的头的key的一个数组
+									o.authHeadersStr = [];
+									//签名的头
+									o.authCanonicalHeadersStr = [];
 	
-	        //排序
-			o.authCanonicalHeadersStr.sort();
-			//用\n拼接
-			o.authCanonicalHeadersStr = o.authCanonicalHeadersStr.join(o.n);
-			//用;拼接
-			o.authHeadersStr = o.authHeadersStr.join(';');
-	    },
-	    //格式化头信息
-	    _signRunHeadersFormat(o){
-			//克隆
-			var headersTemp = Object.create(null) ;
-	        var headersOld = o.headers;
-	        var value = '';
-	        var key = '';
-			//遍历头
-			for (key in headersOld) {
-				//去左右空格
-				key = sign._trim(key);
-	            value = sign._trim(headersOld[key]);
-				switch(key.toLowerCase()){
-					case 'authorization':
-						continue;
-					case 'host':
-						key='Host';
-						break ;
-					case 'content-length':
-						key='Content-Length';
-						break ;
-					case 'content-type':
-						key='Content-Type';
-						break ;
-					case 'content-md5':
-						key='Content-Md5';
-						break ;
-				}
-				if (value) {
-					headersTemp[key] = value;
-				}
-			}
-			//把处理后的赋值回给
-			o.headers = headersTemp ;
-			//释放内存
-			headersTemp = headersOld = key = value = void 0 ;
-			//强制有host头
-			o.headers.Host = o.headers.Host?o.headers.Host:o.host;
+									o.headersPrefix = o.headersPrefix || sign.headersPrefix || request.headersPrefix;
+									o.headersPrefixLen = o.headersPrefix.length;
+									var keyLower,
+									    key,
+									    value,
+									    headersOld = o.headers;
+									for (key in headersOld) {
+													if (!Object.hasOwnProperty.call(headersOld, key)) {
+																	continue;
+													}
+													//取得key对应的value
+													value = headersOld[key];
+													//小写的key
+													keyLower = key.toLowerCase();
+													//判断一下
+													if (sign.excludeHeaderKeys.indexOf(keyLower) > -1 || keyLower.substr(0, o.headersPrefixLen) == o.headersPrefix) {
+																	o.authCanonicalHeadersStr.push(request.urlEncode(keyLower) + ':' + request.urlEncode(value));
+																	o.authHeadersStr.push(keyLower);
+													}
+									}
 	
+									//排序
+									o.authCanonicalHeadersStr.sort();
+									//用\n拼接
+									o.authCanonicalHeadersStr = o.authCanonicalHeadersStr.join(o.n);
+									//用;拼接
+									o.authHeadersStr = o.authHeadersStr.join(';');
+					},
 	
-			if (o.body&&o.body.length>0) {
-				o.headers['Content-Length'] = o.headers['Content-Length']?o.headers['Content-Length']:o.body.length;
-				o.headers['Content-Type'] = o.headers['Content-Type']?o.headers['Content-Type']:'application/x-www-form-urlencoded; charset=UTF-8';
-				o.headers['Content-Md5'] = sign.md5Base64(o.body);
-			}
-	    },
-	    //初始化GET参数
-	    _signRunQueryInit(o){
-			//签名数组
-			let queryArray = [];
-			if (o.query&&o.query.length>0) {
-	            o.query.split('&').forEach(function(t) {
-					if (!t) {
-						return ;
+					//格式化头信息
+					_signRunHeadersFormat: function _signRunHeadersFormat(o) {
+									//克隆
+									var headersTemp = Object.create(null);
+									var headersOld = o.headers;
+									var value = '';
+									var key = '';
+									//遍历头
+									for (key in headersOld) {
+													//去左右空格
+													key = sign._trim(key);
+													value = sign._trim(headersOld[key]);
+													switch (key.toLowerCase()) {
+																	case 'authorization':
+																					continue;
+																	case 'host':
+																					key = 'Host';
+																					break;
+																	case 'content-length':
+																					key = 'Content-Length';
+																					break;
+																	case 'content-type':
+																					key = 'Content-Type';
+																					break;
+																	case 'content-md5':
+																					key = 'Content-Md5';
+																					break;
+													}
+													if (value) {
+																	headersTemp[key] = value;
+													}
+									}
+									//把处理后的赋值回给
+									o.headers = headersTemp;
+									//释放内存
+									headersTemp = headersOld = key = value = void 0;
+									//强制有host头
+									o.headers.Host = o.headers.Host ? o.headers.Host : o.host;
+	
+									if (o.body && o.body.length > 0) {
+													o.headers['Content-Length'] = o.headers['Content-Length'] ? o.headers['Content-Length'] : o.body.length;
+													o.headers['Content-Type'] = o.headers['Content-Type'] ? o.headers['Content-Type'] : 'application/x-www-form-urlencoded; charset=UTF-8';
+													o.headers['Content-Md5'] = sign.md5Base64(o.body);
+									}
+					},
+	
+					//初始化GET参数
+					_signRunQueryInit: function _signRunQueryInit(o) {
+									//签名数组
+									var queryArray = [];
+									if (o.query && o.query.length > 0) {
+													o.query.split('&').forEach(function (t) {
+																	if (!t) {
+																					return;
+																	}
+																	var key, value, i;
+																	//找到第一个等号的首次出现位置
+																	i = t.indexOf('=');
+																	//取得key
+																	key = t.substr(0, i);
+																	//取得value
+																	value = t.substr(i + 1);
+																	//先去左右空格再编码
+																	key = sign._trim(key);
+																	value = sign._trim(value);
+																	//插入新数组
+																	queryArray.push(key + '=' + value);
+													});
+									}
+									//排序
+									queryArray.sort();
+									//用&拼接
+									o.query = queryArray.join('&');
+									//回收内存
+									queryArray = void 0;
+					},
+	
+					//base初始化
+					_signRunBaseInit: function _signRunBaseInit(o) {
+									//默认换行
+									o.n = o.n || '\n';
+									//请求id
+									o.request_id = o.request_id || request.createRequestId();
+									//请求方式
+									o.method = (o.method || 'GET').toString().toUpperCase();
+									//强制是字符串
+									o.query = o.query || '';
+									//get请求
+									if (o.method.toLowerCase() == 'GET') {
+													//如果有请求体
+													if (o.body) {
+																	//拼接到query中
+																	o.query += o.query ? '&' : '';
+																	//清空请求体
+																	o.body = '';
+													}
+									} else {
+													o.body = o.body || '';
+									}
+					},
+					getUTCServerTime: function getUTCServerTime(difference_time) {
+									var d;
+									d = new Date();
+									d = new Date(parseInt(d.getTime() + (parseInt(difference_time) || 0) * 1000) + 60 * d.getTimezoneOffset());
+									return d.getUTCFullYear() + '-' + sign._replenish(d.getUTCMonth() + 1, 2) + '-' + sign._replenish(d.getUTCDate(), 2) + 'T' + sign._replenish(d.getUTCHours(), 2) + ':' + sign._replenish(d.getUTCMinutes(), 2) + ':' + sign._replenish(d.getUTCSeconds(), 2) + 'Z';
+					},
+					_replenish: function _replenish(text, total, rstr) {
+									text = text.toString();
+									var rstrlen = total - text.length || 0;
+									var rstri = 0;
+									var r = text;
+									switch (arguments.length) {
+													case 3:
+																	break;
+													case 2:
+																	rstr = '0';
+																	break;
+													default:
+																	return r;
+									}
+									for (rstri = 0; rstri < rstrlen; rstri++) {
+													r = rstr.toString() + r.toString();
+									}
+									return r;
+					},
+					_trim: function _trim(str) {
+									return str.toString().trim();
+					},
+					md5Hex: function md5Hex(str, isToString) {
+									str = str || '';
+									if (isToString !== false) {
+													str = str.toString();
+									}
+									return cryptoJsCore.MD5(str).toString(cryptoJsHex);
+					},
+					md5Base64: function md5Base64(str, isToString) {
+									str = str || '';
+									if (isToString !== false) {
+													str = str.toString();
+									}
+									return cryptoJsCore.MD5(str).toString(cryptoJsBase64);
+					},
+					HmacSHA256: function HmacSHA256(str, key, isToString) {
+									str = str || '';
+									if (isToString !== false) {
+													str = str.toString();
+									}
+									return cryptoJsCore.HmacSHA256(str, key).toString(cryptoJsHex);
 					}
-					var key , value, i;
-						//找到第一个等号的首次出现位置
-						i = t.indexOf('=');
-						//取得key
-						key = t.substr(0,i);
-						//取得value
-						value = t.substr(i+1);
-						//先去左右空格再编码
-						key = request.urlEncode(sign._trim(key));
-						value = request.urlEncode(sign._trim(value));
-						//插入新数组
-						queryArray.push(key+'='+value);
-				})
-			}
-			//排序
-			queryArray.sort();
-			//用&拼接
-			o.query = queryArray.join('&');
-			//回收内存
-			queryArray = void 0 ;
-	    },
-	    //base初始化
-	    _signRunBaseInit(o){
-	        //默认换行
-			o.n = o.n || '\n';
-			//请求id
-			o.request_id = o.request_id || request.createRequestId();
-	        //请求方式
-	        o.method = (o.method || 'GET').toString().toUpperCase();
-	        //强制是字符串
-	        o.query = o.query || '';
-	        //get请求
-			if (o.method.toLowerCase()=='GET') {
-	            //如果有请求体
-	            if (o.body) {
-	                //拼接到query中
-	                o.query += o.query ? '&' :'';
-	                //清空请求体
-	                o.body = '';
-	            }
-			}else{
-				o.body = o.body||'';
-			}
-	    },
-	    getUTCServerTime(difference_time) {
-			var d;
-				d = new Date();
-				d = new Date(parseInt(d.getTime()+((parseInt(difference_time)||0)*1000))+(60*d.getTimezoneOffset()));
-				return d.getUTCFullYear()+'-'+sign._replenish((d.getUTCMonth() + 1),2)+'-'+sign._replenish((d.getUTCDate()),2)+'T'+sign._replenish((d.getUTCHours()),2)+':'+sign._replenish((d.getUTCMinutes()),2)+':'+ sign._replenish((d.getUTCSeconds()),2)+'Z';
-		},
-	    _replenish(text,total,rstr){
-			text = text.toString();
-			var rstrlen = (total-text.length)||0;
-			var rstri = 0;
-			var r = text;
-			switch(arguments.length){
-				case 3:
-				break;
-				case 2:
-					rstr = '0' ;
-				break;
-				default:
-				return r;
-			}
-			for (rstri = 0; rstri<rstrlen; rstri++) {
-				r = rstr.toString()+r.toString();
-			}
-			return r;
-		},
-	    _trim(str){
-	        return str.toString().trim();
-	    },
-	    md5Hex(str, isToString){
-	        str = str || '';
-	        if (isToString!==false) {
-	            str = str.toString();
-	        }
-	        return cryptoJsCore.MD5(str).toString(cryptoJsHex);
-	    },
-	    md5Base64(str, isToString){
-	        str = str || '';
-	        if (isToString!==false) {
-	            str = str.toString();
-	        }
-	        return cryptoJsCore.MD5(str).toString(cryptoJsBase64);
-	    },
-	    HmacSHA256(str, key, isToString){
-	        str = str || '';
-	        if (isToString!==false) {
-	            str = str.toString();
-	        }
-	        return cryptoJsCore.HmacSHA256(str,key).toString(cryptoJsHex);
-	    }
 	});
 	//引入签名会话模块
 	//引入请求模块
-	const api = __webpack_require__(1);
-	const request = __webpack_require__(4);
-	const session = __webpack_require__(47);
-	const cryptoJsCore = __webpack_require__(48);
-	const cryptoJsMd5 = __webpack_require__(51);
-	const cryptoJsHmacSha256 = __webpack_require__(52);
-	const cryptoJsBase64 = __webpack_require__(49);
-	const cryptoJsHex = __webpack_require__(55);
-
+	var api = __webpack_require__(1);
+	var request = __webpack_require__(5);
+	var session = __webpack_require__(48);
+	var cryptoJsCore = __webpack_require__(49);
+	var cryptoJsMd5 = __webpack_require__(52);
+	var cryptoJsHmacSha256 = __webpack_require__(53);
+	var cryptoJsBase64 = __webpack_require__(50);
+	var cryptoJsHex = __webpack_require__(56);
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const getSessionTrueCbs = [];
-	const getSessionInitCbs = [];
-	let _getSessionTrueDataCbsIng = false;
-	let _getSessionInitCbsIng = false;
-	const session = module.exports = {
+	'use strict';
+	
+	var getSessionTrueCbs = [];
+	var getSessionInitCbs = [];
+	var _getSessionTrueDataCbsIng = false;
+	var _getSessionInitCbsIng = false;
+	var session = module.exports = {
 	    //会话初始化
-	    init(o){
+	    init: function init(o) {
 	        o = o || Object.create(null);
-	        return new api.Promise(function(resolve, reject) {
-	            var isRun = false ;
+	        return new api.Promise(function (resolve, reject) {
+	            var isRun = false;
 	            //处理回调
 	            if (o.isServerNode) {
 	                o.req._getSessionInitCbs = o.req._getSessionInitCbs || [];
 	                //服务端-处理同一请求多次初始化会话的问题，同一回调
 	                o.req._getSessionInitCbs.push([resolve, reject, o]);
-	                o.req._getSessionInitCbs.push([function(){
-	                    if(this&&this.req){
+	                o.req._getSessionInitCbs.push([function () {
+	                    if (this && this.req) {
 	                        this.req._getSessionInitCbsIng = false;
 	                    }
-	                }.bind(o), function(){
-	                    if(this&&this.req){
+	                }.bind(o), function () {
+	                    if (this && this.req) {
 	                        this.req._getSessionInitCbsIng = false;
 	                    }
 	                }.bind(o), o]);
-	                if (o.req._getSessionInitCbsIng!==true) {
-	                    isRun = true ;
-	                    o.req._getSessionInitCbsIng=true;
+	                if (o.req._getSessionInitCbsIng !== true) {
+	                    isRun = true;
+	                    o.req._getSessionInitCbsIng = true;
 	                }
-	            }else if(session.isClientWindow){
+	            } else if (session.isClientWindow) {
 	                //浏览器-处理同一请求多次初始化会话的问题，同一回调
 	                getSessionInitCbs.push([resolve, reject, o]);
-	                getSessionInitCbs.push([function(){
+	                getSessionInitCbs.push([function () {
 	                    _getSessionInitCbsIng = false;
-	                }, function(){
+	                }, function () {
 	                    _getSessionInitCbsIng = false;
 	                }, o]);
-	                if (_getSessionInitCbsIng!==true) {
-	                    isRun = true ;
-	                    _getSessionInitCbsIng=true;
+	                if (_getSessionInitCbsIng !== true) {
+	                    isRun = true;
+	                    _getSessionInitCbsIng = true;
 	                }
-	            }else{
+	            } else {
 	                reject(new Error('Neither a browser nor req and res'));
 	            }
 	            if (isRun) {
-	                session._initRun(o).then(function(){
+	                session._initRun(o).then(function () {
 	                    //批量回调成功
 	                    var cbt;
-	                    if (o&&o.req&&o.req._getSessionInitCbs) {
-	                        while(cbt=o.req._getSessionInitCbs.shift()){
-	                            if (cbt&&cbt[0]&&cbt[2]&&typeof cbt[0]==='function') {
+	                    if (o && o.req && o.req._getSessionInitCbs) {
+	                        while (cbt = o.req._getSessionInitCbs.shift()) {
+	                            if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
 	                                cbt[0](cbt[2]);
 	                            }
 	                            cbt = void 0;
 	                        }
-	                    }else if(session.isClientWindow&&getSessionInitCbs){
-	                        while(cbt=getSessionInitCbs.shift()){
-	                            if (cbt&&cbt[0]&&cbt[2]&&typeof cbt[0]==='function') {
+	                    } else if (session.isClientWindow && getSessionInitCbs) {
+	                        while (cbt = getSessionInitCbs.shift()) {
+	                            if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
 	                                cbt[0](cbt[2]);
 	                            }
 	                            cbt = void 0;
 	                        }
 	                    }
 	                    o = void 0;
-	                }).catch(function(e){
+	                }).catch(function (e) {
 	                    //批量回调异常
 	                    var cbt;
-	                    if (o&&o.req&&o.req._getSessionInitCbs) {
-	                        while(cbt=o.req._getSessionInitCbs.shift()){
-	                            if (cbt&&cbt[1]&&typeof cbt[1]==='function') {
+	                    if (o && o.req && o.req._getSessionInitCbs) {
+	                        while (cbt = o.req._getSessionInitCbs.shift()) {
+	                            if (cbt && cbt[1] && typeof cbt[1] === 'function') {
 	                                cbt[1](e);
 	                            }
 	                            cbt = void 0;
 	                        }
-	                    }else if(session.isClientWindow&&getSessionInitCbs){
-	                        while(cbt=getSessionInitCbs.shift()){
-	                            if (cbt&&cbt[1]&&typeof cbt[1]==='function') {
+	                    } else if (session.isClientWindow && getSessionInitCbs) {
+	                        while (cbt = getSessionInitCbs.shift()) {
+	                            if (cbt && cbt[1] && typeof cbt[1] === 'function') {
 	                                cbt[1](e);
 	                            }
 	                            cbt = void 0;
@@ -8858,51 +8999,51 @@
 	            resolve = reject = isRun = void 0;
 	        });
 	    },
-	    _initRun(o){
+	    _initRun: function _initRun(o) {
 	        //初始化基本参数
 	        session._initRunBaseInit(o);
 	        //
-	        return new api.Promise(function(resolve, reject) {
-	            var initTrySum = session.initTrySum || o.initTrySum ;
+	        return new api.Promise(function (resolve, reject) {
+	            var initTrySum = session.initTrySum || o.initTrySum;
 	            if (o.initTryNum >= initTrySum) {
 	                reject(new Error('Session initialization failed, exceeding maximum attempted test'));
 	                initTryNum = void 0;
 	                return;
-	            }else if (o.initTryNum >= 2) {
-	                console.log('清理尝试')
-	            }else{
+	            } else if (o.initTryNum >= 2) {
+	                console.log('清理尝试');
+	            } else {
 	                resolve(o);
 	            }
 	            o = void 0;
-	        }).then(function(o){
+	        }).then(function (o) {
 	            return session.getData(o);
-	        }).then(function(o){
+	        }).then(function (o) {
 	            //检测设备唯一识别号
-	            if (o.sessionData&&o.sessionData.session_card) {
+	            if (o.sessionData && o.sessionData.session_card) {
 	                return o;
-	            }else{
+	            } else {
 	                return session.createCard(o);
 	            }
-	        }).then(function(o){
+	        }).then(function (o) {
 	            o.request_id = o.request_id || request.createRequestId();
 	
-				//授权字符串
-				var authorization = 'session-init-v1';
-				authorization += '/' + o.request_id;
-				authorization += '/' + (o.sessionData.session_id||'0');
-				authorization += '/' + o.sessionData.session_card;
-				authorization += '/' + sign.getUTCServerTime(o.sessionData.difference_time||0)+'/'+'1800';
-				var signingKey = sign.HmacSHA256(authorization, (o.sessionData.session_key||'session_key'));
-				//生成加密key
-				authorization += '/'+ request.createGuid() ;
-				authorization += '/'+ sign.HmacSHA256(authorization, signingKey );
+	            //授权字符串
+	            var authorization = 'session-init-v1';
+	            authorization += '/' + o.request_id;
+	            authorization += '/' + (o.sessionData.session_id || '0');
+	            authorization += '/' + o.sessionData.session_card;
+	            authorization += '/' + sign.getUTCServerTime(o.sessionData.difference_time || 0) + '/' + '1800';
+	            var signingKey = sign.HmacSHA256(authorization, o.sessionData.session_key || 'session_key');
+	            //生成加密key
+	            authorization += '/' + request.createGuid();
+	            authorization += '/' + sign.HmacSHA256(authorization, signingKey);
 	
 	            o.headers = o.headers || Object.create(null);
 	            o.headers.Authorization = authorization;
 	
-				signingKey = authorization = void 0 ;
+	            signingKey = authorization = void 0;
 	            return o;
-	        }).then(function(o){
+	        }).then(function (o) {
 	            //请求方式
 	            o.method = o.method || 'GET';
 	            o.path = o.path || session.sessionInitPath || '/session/init';
@@ -8912,75 +9053,78 @@
 	            o.serverRes.body = '';
 	            //返回一个请求
 	            return request.runRequest(o);
-	        }).then(function(o){
-	            return new api.Promise(function(resolve, reject) {
-	                var r = null, e = null, code = 0, res = o.serverRes;
-	                code = res.statusCode ;
-	                try{
-	                    r = JSON.parse(res.body) ;
-	                }catch(e1){
+	        }).then(function (o) {
+	            return new api.Promise(function (resolve, reject) {
+	                var r = null,
+	                    e = null,
+	                    code = 0,
+	                    res = o.serverRes;
+	                code = res.statusCode;
+	                try {
+	                    r = JSON.parse(res.body);
+	                } catch (e1) {
 	                    e = e1;
 	                }
 	                if (e) {
-	                    e.statusCode = res.statusCode ;
-	                    e.error_id = res.status ;
-	                    e.message = res.status || 'Unknow Error' ;
+	                    e.statusCode = res.statusCode;
+	                    e.error_id = res.status;
+	                    e.message = res.status || 'Unknow Error';
 	                    reject(e);
-	                }else if (r) {
+	                } else if (r) {
 	                    if (r.state) {
 	                        r.statusCode = r.statusCode || r.code || res.statusCode;
 	                        r.error_id = r.error_id || res.status;
-	                        r.message = r.message || r.msg || res.status || 'Unknow Error' ;
-	                        o._serverResObj = r ;
+	                        r.message = r.message || r.msg || res.status || 'Unknow Error';
+	                        o._serverResObj = r;
 	                        resolve(o);
-	                    }else{
+	                    } else {
 	                        e = new Error(r.message || r.msg || res.status || 'Unknow Error');
-	                        e.statusCode = r.statusCode || r.code || res.statusCode ;
+	                        e.statusCode = r.statusCode || r.code || res.statusCode;
 	                        e.error_id = r.error_id || res.status;
-	                        e.message = r.message || r.msg || res.status || 'Unknow Error' ;
+	                        e.message = r.message || r.msg || res.status || 'Unknow Error';
 	                        reject(e);
 	                    }
 	                }
 	                o.destroy();
-	                o = resolve = reject = r = e = code =res = void 0 ;
+	                o = resolve = reject = r = e = code = res = void 0;
 	            });
-	        }).then(function(o){
-	            return new Promise(function(resolve, reject) {
+	        }).then(function (o) {
+	            return new Promise(function (resolve, reject) {
 	                var res = o._serverResObj;
 	
-					if (res.type != 'update') {
-						//如果不需要更新就跳过
-						resolve(o);
-						return;
-					}
+	                if (res.type != 'update') {
+	                    //如果不需要更新就跳过
+	                    resolve(o);
+	                    return;
+	                }
 	                var sessionData = res.session_data;
-					//服务器时间
-					sessionData.server_time = sessionData.server_time || request.time();
-					//本地时间
-					sessionData.local_time = request.time();
-					//服务器时间减去本地时间
-					sessionData.difference_time = sessionData.server_time - sessionData.local_time;
-					//到期时间
+	                //服务器时间
+	                sessionData.server_time = sessionData.server_time || request.time();
+	                //本地时间
+	                sessionData.local_time = request.time();
+	                //服务器时间减去本地时间
+	                sessionData.difference_time = sessionData.server_time - sessionData.local_time;
+	                //到期时间
 	
-					if (sessionData.expires_time!==undefined&&sessionData.expires_time!==null) {
-						sessionData.expires_time +=sessionData.difference_time;
-					}else{
-						sessionData.expires_time = request.time()+(60*60*24*7);
-					}
-					//获取会话数据
-					session.setData(o, JSON.stringify(sessionData)).then(resolve).catch(reject);
+	                if (sessionData.expires_time !== undefined && sessionData.expires_time !== null) {
+	                    sessionData.expires_time += sessionData.difference_time;
+	                } else {
+	                    sessionData.expires_time = request.time() + 60 * 60 * 24 * 7;
+	                }
+	                //获取会话数据
+	                session.setData(o, JSON.stringify(sessionData)).then(resolve).catch(reject);
 	            });
 	        });
 	    },
-	    createCard(o){
-	        return new api.Promise(function(resolve, reject) {
+	    createCard: function createCard(o) {
+	        return new api.Promise(function (resolve, reject) {
 	            o.sessionData = o.sessionData || Object.create(null);
 	            o.sessionData.session_card = 'ed9a-d251b2e6-48c3-9c08-e426-ed15398ac305-73624bb2';
 	            resolve(o);
 	            //reject('ed9a-d251b2e6-48c3-9c08-e426-ed15398ac305-73624bb2');
 	        });
 	    },
-	    _initRunBaseInit(o){
+	    _initRunBaseInit: function _initRunBaseInit(o) {
 	        //默认0次参数
 	        o.initTryNum = o.initTryNum || 0;
 	        //默认0次参数
@@ -8990,47 +9134,48 @@
 	        o.req = o.req || null;
 	        o.res = o.res || null;
 	        //是否在node服务器运行
-	        o.isServerNode = (o.isServerNode!==void 0)?o.isServerNode:Boolean(o.req&&o.res);
+	        o.isServerNode = o.isServerNode !== void 0 ? o.isServerNode : Boolean(o.req && o.res);
 	        //获取基本信息
-	        o.host = o.host || url('hostname',o.baseUrl);
-	        o.port = o.port || url('port',o.baseUrl);
-	        o.protocol = o.protocol || url('protocol',o.baseUrl);
+	        o.host = o.host || url('hostname', o.baseUrl);
+	        o.port = o.port || url('port', o.baseUrl);
+	        o.protocol = o.protocol || url('protocol', o.baseUrl);
 	    },
+	
 	    //获取正确的会话数据
-	    getTrueData(o){
-	        return new api.Promise(function(resolve, reject) {
-	            var isRun = false ;
+	    getTrueData: function getTrueData(o) {
+	        return new api.Promise(function (resolve, reject) {
+	            var isRun = false;
 	            //处理回调
 	            if (o.isServerNode) {
 	                o.req._getSessionTrueDataCbs = o.req._getSessionTrueDataCbs || [];
 	                //服务端-处理同一请求多次初始化会话的问题，同一回调
 	                o.req._getSessionTrueDataCbs.push([resolve, reject, o]);
-	                o.req._getSessionTrueDataCbs.push([function(){
-	                    if(this&&this.req){
+	                o.req._getSessionTrueDataCbs.push([function () {
+	                    if (this && this.req) {
 	                        this.req._getSessionTrueDataCbsIng = false;
 	                    }
-	                }.bind(o), function(){
-	                    if(this&&this.req){
+	                }.bind(o), function () {
+	                    if (this && this.req) {
 	                        this.req._getSessionTrueDataCbsIng = false;
 	                    }
 	                }.bind(o), o]);
-	                if (o.req._getSessionTrueDataCbsIng!==true) {
-	                    isRun = true ;
-	                    o.req._getSessionTrueDataCbsIng=true;
+	                if (o.req._getSessionTrueDataCbsIng !== true) {
+	                    isRun = true;
+	                    o.req._getSessionTrueDataCbsIng = true;
 	                }
-	            }else if(session.isClientWindow){
+	            } else if (session.isClientWindow) {
 	                //浏览器-处理同一请求多次初始化会话的问题，同一回调
 	                getSessionTrueCbs.push([resolve, reject, o]);
-	                getSessionTrueCbs.push([function(){
+	                getSessionTrueCbs.push([function () {
 	                    _getSessionTrueDataCbsIng = false;
-	                }, function(){
+	                }, function () {
 	                    _getSessionTrueDataCbsIng = false;
 	                }, o]);
-	                if (_getSessionTrueDataCbsIng!==true) {
-	                    isRun = true ;
-	                    _getSessionTrueDataCbsIng=true;
+	                if (_getSessionTrueDataCbsIng !== true) {
+	                    isRun = true;
+	                    _getSessionTrueDataCbsIng = true;
 	                }
-	            }else{
+	            } else {
 	                reject(new Error('Neither a browser nor req and res'));
 	            }
 	            if (isRun) {
@@ -9039,79 +9184,80 @@
 	            resolve = reject = o = isRun = void 0;
 	        });
 	    },
+	
 	    //获取正确的会话数据-开始运行
-	    _getTrueDataRun(o){
+	    _getTrueDataRun: function _getTrueDataRun(o) {
 	        var sessionO = {
-	            req:o.req||null,
-	            res:o.res||null,
-	            host:o.host,
-	            port:o.port,
-	            baseUrl:o.baseUrl,
-	            protocol:o.protocol,
-	            isServerNode:o.isServerNode,
-	            cookieName:o.cookieName,
-	            cookieNameEnCode:o.cookieNameEnCode,
-	            isSessionInit:o.isSessionInit,
-	            isSessionDataPass:o.isSessionDataPass,
-	            sessionData:o.sessionData,
-	            sessionDataStr:o.sessionDataStr,
-	            sessionDataOldStr:o.sessionDataOldStr
+	            req: o.req || null,
+	            res: o.res || null,
+	            host: o.host,
+	            port: o.port,
+	            baseUrl: o.baseUrl,
+	            protocol: o.protocol,
+	            isServerNode: o.isServerNode,
+	            cookieName: o.cookieName,
+	            cookieNameEnCode: o.cookieNameEnCode,
+	            isSessionInit: o.isSessionInit,
+	            isSessionDataPass: o.isSessionDataPass,
+	            sessionData: o.sessionData,
+	            sessionDataStr: o.sessionDataStr,
+	            sessionDataOldStr: o.sessionDataOldStr
 	        };
 	        var keys = Object.keys(sessionO);
-	        session.getData(sessionO).then(function(o){
+	        session.getData(sessionO).then(function (o) {
 	            //检测会话是否过期
-	            return new api.Promise(function(resolve, reject) {
-	                var isSessionDataPass = true ;
-	                    //o.isSessionInit 是否强制
-	                    isSessionDataPass = isSessionDataPass&&(!o.isSessionInit);
-	                    //基本需要的数据检测
-	                    isSessionDataPass = isSessionDataPass&&o.sessionData&&o.sessionData.session_id&&o.sessionData.session_key&&o.sessionData.session_card;
-	                    //检测事件
-	                    isSessionDataPass = isSessionDataPass&&o.sessionData.expires_time&&request.time()<(o.sessionData.expires_time-5);
-	    			//为了保证没有问题，提前5秒钟过期
-	    			if (isSessionDataPass){
-	    				//下一步
-	    				resolve(o);
+	            return new api.Promise(function (resolve, reject) {
+	                var isSessionDataPass = true;
+	                //o.isSessionInit 是否强制
+	                isSessionDataPass = isSessionDataPass && !o.isSessionInit;
+	                //基本需要的数据检测
+	                isSessionDataPass = isSessionDataPass && o.sessionData && o.sessionData.session_id && o.sessionData.session_key && o.sessionData.session_card;
+	                //检测事件
+	                isSessionDataPass = isSessionDataPass && o.sessionData.expires_time && request.time() < o.sessionData.expires_time - 5;
+	                //为了保证没有问题，提前5秒钟过期
+	                if (isSessionDataPass) {
+	                    //下一步
+	                    resolve(o);
 	                    //回收
 	                    resolve = reject = o = void 0;
-	    			}else{
+	                } else {
 	                    //重新初始化
-	                    o.isSessionInit = undefined ;
+	                    o.isSessionInit = undefined;
 	                    session.init({
-	                        req:o.req||null,
-	                        res:o.res||null,
-	                        host:o.host,
-	                        port:o.port,
-	                        baseUrl:o.baseUrl,
-	                        protocol:o.protocol,
-	                        isServerNode:o.isServerNode
-	                    }).then(function(){
+	                        req: o.req || null,
+	                        res: o.res || null,
+	                        host: o.host,
+	                        port: o.port,
+	                        baseUrl: o.baseUrl,
+	                        protocol: o.protocol,
+	                        isServerNode: o.isServerNode
+	                    }).then(function () {
 	                        if (typeof resolve === 'function') {
 	                            session.getData(o).then(resolve).catch(reject);
 	                        }
 	                        resolve = reject = o = void 0;
-	                    }).catch(function(e){
+	                    }).catch(function (e) {
 	                        if (typeof reject === 'function') {
 	                            reject(e);
 	                        }
 	                        resolve = reject = o = void 0;
 	                    });
-	    			}
+	                }
 	            });
-	        }).then(function(){
+	        }).then(function () {
 	            //批量回调成功
 	            var cbt;
-	            if (sessionO.req&&sessionO.req._getSessionTrueDataCbs) {
-	                while(cbt=sessionO.req._getSessionTrueDataCbs.shift()){
-	                    if (cbt&&cbt[0]&&cbt[2]&&typeof cbt[0]==='function') {
+	            if (sessionO.req && sessionO.req._getSessionTrueDataCbs) {
+	                while (cbt = sessionO.req._getSessionTrueDataCbs.shift()) {
+	                    if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
 	                        api.copyObjByKey(cbt[2], sessionO, keys);
 	                        cbt[0](cbt[2]);
 	                    }
 	                    cbt = void 0;
 	                }
-	            }else if(session.isClientWindow&&getSessionTrueCbs){
-	                while(cbt=getSessionTrueCbs.shift()){
-	                    if (cbt&&cbt[0]&&cbt[2]&&typeof cbt[0]==='function') {
+	            } else if (session.isClientWindow && getSessionTrueCbs) {
+	                while (cbt = getSessionTrueCbs.shift()) {
+	                    if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
 	                        api.copyObjByKey(cbt[2], sessionO, keys);
 	                        cbt[0](cbt[2]);
 	                    }
@@ -9119,19 +9265,19 @@
 	                }
 	            }
 	            e = sessionO = void 0;
-	        }).catch(function(e){
+	        }).catch(function (e) {
 	            //批量回调异常
 	            var cbt;
-	            if (sessionO.req&&sessionO.req._getSessionTrueDataCbs) {
-	                while(cbt=sessionO.req._getSessionTrueDataCbs.shift()){
-	                    if (cbt&&cbt[1]&&typeof cbt[1]==='function') {
+	            if (sessionO.req && sessionO.req._getSessionTrueDataCbs) {
+	                while (cbt = sessionO.req._getSessionTrueDataCbs.shift()) {
+	                    if (cbt && cbt[1] && typeof cbt[1] === 'function') {
 	                        cbt[1](e);
 	                    }
 	                    cbt = void 0;
 	                }
-	            }else if(session.isClientWindow&&getSessionTrueCbs){
-	                while(cbt=getSessionTrueCbs.shift()){
-	                    if (cbt&&cbt[1]&&typeof cbt[1]==='function') {
+	            } else if (session.isClientWindow && getSessionTrueCbs) {
+	                while (cbt = getSessionTrueCbs.shift()) {
+	                    if (cbt && cbt[1] && typeof cbt[1] === 'function') {
 	                        cbt[1](e);
 	                    }
 	                    cbt = void 0;
@@ -9141,60 +9287,60 @@
 	        });
 	        o = void 0;
 	    },
-	    setData(o, sessionData){
-	        return new api.Promise(function(resolve, reject) {
-	            if(!o.cookieName){
+	    setData: function setData(o, sessionData) {
+	        return new api.Promise(function (resolve, reject) {
+	            if (!o.cookieName) {
 	                //根据host和port生成cookieName
-	                o.cookieName = o.host + (o.port?(':'+o.port):'');
+	                o.cookieName = o.host + (o.port ? ':' + o.port : '');
 	            }
 	            //编码cookieName
 	            o.cookieNameEnCode = session._cookieNameEnCode(o.cookieName);
 	            if (o.isServerNode) {
 	                //服务器模式
 	                session._setDataNode(o, sessionData, resolve, reject);
-	            }else if(isClientWindow){
+	            } else if (isClientWindow) {
 	                //客户端
 	                session._setDataClient(o, sessionData, resolve, reject);
-	            }else{
+	            } else {
 	                //不确定是什么浏览器
 	                reject(new Error('Neither a browser nor req and res'));
 	            }
 	            resolve = reject = o = void 0;
 	        });
 	    },
-	    getData(o){
-	        return new api.Promise(function(resolve, reject) {
-	            if(!o.cookieName){
+	    getData: function getData(o) {
+	        return new api.Promise(function (resolve, reject) {
+	            if (!o.cookieName) {
 	                //根据host和port生成cookieName
-	                o.cookieName = o.host + (o.port?(':'+o.port):'');
+	                o.cookieName = o.host + (o.port ? ':' + o.port : '');
 	            }
 	            //编码cookieName
 	            o.cookieNameEnCode = session._cookieNameEnCode(o.cookieName);
 	            if (o.isServerNode) {
 	                //服务器模式
 	                session._getDataNode(o, resolve, reject);
-	            }else if(isClientWindow){
+	            } else if (isClientWindow) {
 	                //客户端
 	                session._getDataClient(o, resolve, reject);
-	            }else{
+	            } else {
 	                //不确定是什么浏览器
 	                reject(new Error('Neither a browser nor req and res'));
 	            }
 	            resolve = reject = o = void 0;
-	        }).then(function(o){
+	        }).then(function (o) {
 	            //反序列化会话数据
-	            return new api.Promise(function(resolve, reject) {
-	                if (o.sessionDataStr&&typeof o.sessionDataStr ==='string'){
+	            return new api.Promise(function (resolve, reject) {
+	                if (o.sessionDataStr && typeof o.sessionDataStr === 'string') {
 	                    try {
 	                        o.sessionData = JSON.parse(o.sessionDataStr);
 	                    } catch (e) {
-	                        o.sessionData = o.sessionData || Object.create(null)
+	                        o.sessionData = o.sessionData || Object.create(null);
 	                    }
-	                }else{
-	                    o.sessionData = o.sessionData || Object.create(null)
+	                } else {
+	                    o.sessionData = o.sessionData || Object.create(null);
 	                }
 	                //清理
-	                delete o.sessionDataStr ;
+	                delete o.sessionDataStr;
 	                //序列化用于后期比对
 	                o.sessionDataOldStr = session.arrayToStr(o.sessionData);
 	                //回调下一步
@@ -9202,291 +9348,324 @@
 	            });
 	        });
 	    },
+	
 	    //node服务端获取
-	    _getDataNode(o, resolve, reject){
+	    _getDataNode: function _getDataNode(o, resolve, reject) {
 	        var cookiename, data;
-	        try{
-	    		cookiename = o.cookieNameEnCode ;
-	    		o.sessionDataStr = session._getCookiesServer(cookiename, o.req) || (o.res&&o.res.cookieDdvRestfulApiStr) || o.sessionDataStr ;
-	    		//本地存储模块
-	            if (typeof resolve ==='function') {
+	        try {
+	            cookiename = o.cookieNameEnCode;
+	            o.sessionDataStr = session._getCookiesServer(cookiename, o.req) || o.res && o.res.cookieDdvRestfulApiStr || o.sessionDataStr;
+	            //本地存储模块
+	            if (typeof resolve === 'function') {
 	                resolve(o);
 	            }
-	        }catch(e){
-	            if (typeof reject ==='function') {
+	        } catch (e) {
+	            if (typeof reject === 'function') {
 	                reject(e);
 	            }
 	        }
 	        resolve = reject = data = o = void 0;
 	    },
+	
 	    //客户端获取
-	    _setDataNode(o, data, resolve, reject){
-	        if (!(o&&o.res)) {
+	    _setDataNode: function _setDataNode(o, data, resolve, reject) {
+	        if (!(o && o.res)) {
 	            reject(new Error('Your browser does not support cookies and localStorage'));
-	            return ;
+	            return;
 	        }
 	        if (!o.cookieNameEnCode) {
 	            reject(new Error('Deceased cookie surname'));
-	            return ;
+	            return;
 	        }
-	    	var cookiename = o.cookieNameEnCode ;
-	        o.res.cookieDdvRestfulApiStr = data ;
-	        try{
-	    		//本地存储模块
-				if (session.isLongStorage) {
-					session._setCookiesServer(o.res, cookiename, data);
-				}else{
-					session._setCookiesServer(o.res, cookiename, data, session.getExpiresDate('365', '12', '60'));
-				}
+	        var cookiename = o.cookieNameEnCode;
+	        o.res.cookieDdvRestfulApiStr = data;
+	        try {
+	            //本地存储模块
+	            if (session.isLongStorage) {
+	                session._setCookiesServer(o.res, cookiename, data);
+	            } else {
+	                session._setCookiesServer(o.res, cookiename, data, session.getExpiresDate('365', '12', '60'));
+	            }
 	
-	            if (typeof resolve ==='function') {
+	            if (typeof resolve === 'function') {
 	                resolve(o);
 	            }
-	        }catch(e){
-	            if (typeof reject ==='function') {
+	        } catch (e) {
+	            if (typeof reject === 'function') {
 	                reject(e);
 	            }
 	        }
 	        resolve = reject = data = o = sessionData = void 0;
 	    },
+	
 	    //设置cookies
-	    _getCookiesServer(key, req){
+	    _getCookiesServer: function _getCookiesServer(key, req) {
 	        if (req) {
-	            return (req.cookies&&req.cookies[key]) || session._getCookiesByStr(key,  (req.headers&&req.headers.cookie||'')) || '' ;
-	        }else{
+	            return req.cookies && req.cookies[key] || session._getCookiesByStr(key, req.headers && req.headers.cookie || '') || '';
+	        } else {
 	            return '';
 	        }
 	    },
+	
 	    //设置cookies
-	    _setCookiesServer(res, key, value, expires, path, domain, isSecure){
-	        var t ;
+	    _setCookiesServer: function _setCookiesServer(res, key, value, expires, path, domain, isSecure) {
+	        var t;
 	        if (!res) {
-	            return ;
+	            return;
 	        }
 	        if (typeof res.cookie === 'function') {
-	            t = { domain: domain||'', path: path||'/', secure: Boolean(isSecure) };
-	            if(t.domain){
-	                delete t.domain ;
+	            t = { domain: domain || '', path: path || '/', secure: Boolean(isSecure) };
+	            if (t.domain) {
+	                delete t.domain;
 	            }
-	            if(t.secure){
-	                delete t.secure ;
+	            if (t.secure) {
+	                delete t.secure;
 	            }
 	            if (expires) {
 	                t.expires = new Date(expires);
 	            }
 	            res.cookie(key, value, t);
-	        }else{
-	            t = '' ;
-				t+= (key.toString().trim() + '=');
-				t+= session.escape(value) ;
-				t+= expires ? '; expires=' + expires : '' ;
-				t+= (typeof path === 'string' && path !== '') ? ('; path=' + path) : '; path=/' ;
-				t+= (typeof domain === 'string' && domain !== '') ? '; domain=' + domain : '' ;
-				t+= isSecure ? '; secure' : '';
+	        } else {
+	            t = '';
+	            t += key.toString().trim() + '=';
+	            t += session.escape(value);
+	            t += expires ? '; expires=' + expires : '';
+	            t += typeof path === 'string' && path !== '' ? '; path=' + path : '; path=/';
+	            t += typeof domain === 'string' && domain !== '' ? '; domain=' + domain : '';
+	            t += isSecure ? '; secure' : '';
 	            //强制一个数组
 	            res.cookiesSetArray = res.cookiesSetArray || [];
-				//加入输出数组
-				res.cookiesSetArray.push(t);
-				//设置输出头
-				res.setHeader('Set-Cookie', res.cookiesSetArray);
+	            //加入输出数组
+	            res.cookiesSetArray.push(t);
+	            //设置输出头
+	            res.setHeader('Set-Cookie', res.cookiesSetArray);
 	        }
 	        t = void 0;
 	    },
+	
 	    //客户端获取
-	    _getDataClient(o, resolve, reject){
+	    _getDataClient: function _getDataClient(o, resolve, reject) {
 	        var cookiename, data;
-	        if (!(session.isLocalCookie||session.isLocalStorage||session.isSessionStorage)) {
+	        if (!(session.isLocalCookie || session.isLocalStorage || session.isSessionStorage)) {
 	            reject(new Error('Your browser does not support cookies and localStorage'));
-	            return ;
+	            return;
 	        }
-	        try{
-	    		cookiename = o.cookieNameEnCode ;
-	    		data = session._getCookiesClient(cookiename) || null ;
-	    		//本地存储模块
-	    		if(!data){
-	    			try{
-	    				if (session.isLongStorage) {
-	    					//长期存储模式
-	    					data = localStorage.getItem(cookiename) || null ;
-	    					session._setCookiesClient(cookiename, data);
-	    				}else{
-	    					//会话形式
-	    					data = sessionStorage.getItem(cookiename) || null ;
-	    					session._setCookiesClient(cookiename, data, session.getExpiresDate('365', '12', '60'));
-	    				}
-	    			}catch(e){
-	    				data = null ;
-	    			}
-	    		}
-	            o.sessionDataStr = data || o.sessionDataStr ;
-	            if (typeof resolve ==='function') {
+	        try {
+	            cookiename = o.cookieNameEnCode;
+	            data = session._getCookiesClient(cookiename) || null;
+	            //本地存储模块
+	            if (!data) {
+	                try {
+	                    if (session.isLongStorage) {
+	                        //长期存储模式
+	                        data = localStorage.getItem(cookiename) || null;
+	                        session._setCookiesClient(cookiename, data);
+	                    } else {
+	                        //会话形式
+	                        data = sessionStorage.getItem(cookiename) || null;
+	                        session._setCookiesClient(cookiename, data, session.getExpiresDate('365', '12', '60'));
+	                    }
+	                } catch (e) {
+	                    data = null;
+	                }
+	            }
+	            o.sessionDataStr = data || o.sessionDataStr;
+	            if (typeof resolve === 'function') {
 	                resolve(o);
 	            }
-	        }catch(e){
-	            if (typeof reject ==='function') {
+	        } catch (e) {
+	            if (typeof reject === 'function') {
 	                reject(e);
 	            }
 	        }
 	        resolve = reject = data = o = void 0;
 	    },
-	    //客户端获取
-	    _setDataClient(o, data, resolve, reject){
-	        var cookiename, data;
-	        if (!(session.isLocalCookie||session.isLocalStorage||session.isSessionStorage)) {
-	            reject(new Error('Your browser does not support cookies and localStorage'));
-	            return ;
-	        }
-	        try{
-	    		cookiename = o.cookieNameEnCode ;
-	    		//本地存储模块
-				if (session.isLongStorage) {
-					//长期存储模式
-					if (isLocalStorage) {
-					    localStorage.setItem(cookiename, data);
-					}
-					session._setCookiesClient(cookiename, data);
-				}else{
-					//会话形式
-	                if (isSessionStorage) {
-					    sessionStorage.setItem(cookiename, data);
-	                }
-					session._setCookiesClient(cookiename, data, session.getExpiresDate('365', '12', '60'));
-				}
 	
-	            if (typeof resolve ==='function') {
+	    //客户端获取
+	    _setDataClient: function _setDataClient(o, data, resolve, reject) {
+	        var cookiename, data;
+	        if (!(session.isLocalCookie || session.isLocalStorage || session.isSessionStorage)) {
+	            reject(new Error('Your browser does not support cookies and localStorage'));
+	            return;
+	        }
+	        try {
+	            cookiename = o.cookieNameEnCode;
+	            //本地存储模块
+	            if (session.isLongStorage) {
+	                //长期存储模式
+	                if (isLocalStorage) {
+	                    localStorage.setItem(cookiename, data);
+	                }
+	                session._setCookiesClient(cookiename, data);
+	            } else {
+	                //会话形式
+	                if (isSessionStorage) {
+	                    sessionStorage.setItem(cookiename, data);
+	                }
+	                session._setCookiesClient(cookiename, data, session.getExpiresDate('365', '12', '60'));
+	            }
+	
+	            if (typeof resolve === 'function') {
 	                resolve(o);
 	            }
-	        }catch(e){
-	            if (typeof reject ==='function') {
+	        } catch (e) {
+	            if (typeof reject === 'function') {
 	                reject(e);
 	            }
 	        }
 	        resolve = reject = data = o = sessionData = void 0;
 	    },
+	
 	    //客户端读取
-	    _getCookiesClient(key){
+	    _getCookiesClient: function _getCookiesClient(key) {
 	        if (session.isLocalCookie) {
 	            return session._getCookiesByStr(key, document.cookie);
-	        }else{
+	        } else {
 	            return '';
 	        }
 	    },
+	
 	    //客户端存储
-	    _setCookiesClient(key, value, expires, path, domain, isSecure) {
+	    _setCookiesClient: function _setCookiesClient(key, value, expires, path, domain, isSecure) {
 	        var t;
-	        key = (key||'').toString().trim() ;
-	        try{
-	            if(VS_COOKIEDM!==undefined && VS_COOKIEDM!==null && !domain ){
+	        key = (key || '').toString().trim();
+	        try {
+	            if (VS_COOKIEDM !== undefined && VS_COOKIEDM !== null && !domain) {
 	                domain = VS_COOKIEDM;
 	            }
-	        }catch(e){}
-	        t = '' ;
-			t+= (key.toString().trim() + '=');
-			t+= session.escape(value) ;
-			t+= expires ? '; expires=' + expires : '' ;
-			t+= (typeof path === 'string' && path !== '') ? ('; path=' + path) : '; path=/' ;
-			t+= (typeof domain === 'string' && domain !== '') ? '; domain=' + domain : '' ;
-			t+= isSecure ? '; secure' : '';
-	        document.cookie = t ;
+	        } catch (e) {}
+	        t = '';
+	        t += key.toString().trim() + '=';
+	        t += session.escape(value);
+	        t += expires ? '; expires=' + expires : '';
+	        t += typeof path === 'string' && path !== '' ? '; path=' + path : '; path=/';
+	        t += typeof domain === 'string' && domain !== '' ? '; domain=' + domain : '';
+	        t += isSecure ? '; secure' : '';
+	        document.cookie = t;
 	        t = void 0;
 	    },
-	    _cookieNameEnCode(name){
-			name =  cryptoJsCore.enc.Utf8.parse((name||'sid').toString()||'').toString(cryptoJsBase64);
-			name = name.replace(/_/g,'____').replace(/\+/g,'___').replace(/\//g,'__').replace(/=/g,'_');
-			return name;
-		},
+	    _cookieNameEnCode: function _cookieNameEnCode(name) {
+	        name = cryptoJsCore.enc.Utf8.parse((name || 'sid').toString() || '').toString(cryptoJsBase64);
+	        name = name.replace(/_/g, '____').replace(/\+/g, '___').replace(/\//g, '__').replace(/=/g, '_');
+	        return name;
+	    },
+	
 	    //数组序列化
-	    _getCookiesByStr(key, str){
+	    _getCookiesByStr: function _getCookiesByStr(key, str) {
 	        var value = '';
-	        ((str || '').split(';')||[]).forEach(function(t,i){
-	            var a = (t||'').split('=')||[];
-	            if ((a[0]||'').toString().trim()===key) {
-	                value = session.unescape((a[1]||'').toString().trim());
+	        ((str || '').split(';') || []).forEach(function (t, i) {
+	            var a = (t || '').split('=') || [];
+	            if ((a[0] || '').toString().trim() === key) {
+	                value = session.unescape((a[1] || '').toString().trim());
 	            }
-	            a = t = i = void 0 ;
+	            a = t = i = void 0;
 	        });
 	        return value;
 	    },
+	
 	    //数组序列化
-	    arrayToStr(obj){
-	    	var a = [], name;
-	            for (name in obj) {
-	                if (!Object.hasOwnProperty.call(obj, name)) {
-	                    continue;
-	                }
-	    			a.push(name+'='+obj[name]);
+	    arrayToStr: function arrayToStr(obj) {
+	        var a = [],
+	            name;
+	        for (name in obj) {
+	            if (!Object.hasOwnProperty.call(obj, name)) {
+	                continue;
 	            }
-	            name = void 0;
-	    		a.sort();
-	    		obj = void 0;
-	    		a = a.join(';');
-	    		return a;
+	            a.push(name + '=' + obj[name]);
+	        }
+	        name = void 0;
+	        a.sort();
+	        obj = void 0;
+	        a = a.join(';');
+	        return a;
 	    },
-	    isNumber(obj){
-			return (typeof obj==='string'||typeof obj==='number')&&(!Array.isArray( obj ) && (obj - parseFloat( obj ) >= 0));
-		},
+	    isNumber: function isNumber(obj) {
+	        return (typeof obj === 'string' || typeof obj === 'number') && !Array.isArray(obj) && obj - parseFloat(obj) >= 0;
+	    },
+	
 	    //获取GMT格式的过期时间
-	    getExpiresDate(days, hours, minutes, seconds) {
-	    	var ExpiresDate = new Date();
-	    	if (session.isNumber(days) && session.isNumber(hours) && session.isNumber(minutes)) {
-	    		ExpiresDate.setDate(ExpiresDate.getDate() + parseInt(days));
-	    		ExpiresDate.setHours(ExpiresDate.getHours() + parseInt(hours));
-	    		ExpiresDate.setMinutes(ExpiresDate.getMinutes() + parseInt(minutes));
-	    		if (session.isNumber(seconds)) {
-	    			ExpiresDate.setSeconds(ExpiresDate.getSeconds() + parseInt(seconds));
-	    		}
-	    	}
-	    	return ExpiresDate.toGMTString();
+	    getExpiresDate: function getExpiresDate(days, hours, minutes, seconds) {
+	        var ExpiresDate = new Date();
+	        if (session.isNumber(days) && session.isNumber(hours) && session.isNumber(minutes)) {
+	            ExpiresDate.setDate(ExpiresDate.getDate() + parseInt(days));
+	            ExpiresDate.setHours(ExpiresDate.getHours() + parseInt(hours));
+	            ExpiresDate.setMinutes(ExpiresDate.getMinutes() + parseInt(minutes));
+	            if (session.isNumber(seconds)) {
+	                ExpiresDate.setSeconds(ExpiresDate.getSeconds() + parseInt(seconds));
+	            }
+	        }
+	        return ExpiresDate.toGMTString();
 	    },
+	
 	    //解码
-	    unescape(str){
-	        return unescape(str||'');
-	    },
+	    unescape: function (_unescape) {
+	        function unescape(_x) {
+	            return _unescape.apply(this, arguments);
+	        }
+	
+	        unescape.toString = function () {
+	            return _unescape.toString();
+	        };
+	
+	        return unescape;
+	    }(function (str) {
+	        return unescape(str || '');
+	    }),
+	
 	    //编码
-	    escape(str){
-	        return escape(str||'');
-	    }
+	    escape: function (_escape) {
+	        function escape(_x2) {
+	            return _escape.apply(this, arguments);
+	        }
+	
+	        escape.toString = function () {
+	            return _escape.toString();
+	        };
+	
+	        return escape;
+	    }(function (str) {
+	        return escape(str || '');
+	    })
 	};
 	
-	session.isClientWindow = typeof window !== 'undefined'&&window.window === window&&typeof window.document !== 'undefined';
+	session.isClientWindow = typeof window !== 'undefined' && window.window === window && typeof window.document !== 'undefined';
 	session.isLocalCookie = false;
 	session.isLocalStorage = false;
 	session.isSessionStorage = false;
 	session.isLongStorage = false;
 	session.sessionInitPath = '/session/init';
 	if (session.isClientWindow) {
-	    try{
+	    try {
 	        session.isLocalCookie = 'cookie' in window.document;
-	    }catch(e){}
-	    try{
+	    } catch (e) {}
+	    try {
 	        session.isLocalStorage = 'localStorage' in window;
-	    }catch(e){}
-	    try{
+	    } catch (e) {}
+	    try {
 	        session.isSessionStorage = 'sessionStorage' in window;
-	    }catch(e){}
+	    } catch (e) {}
 	}
 	//局部变量-是否为客户端窗口
-	const isClientWindow = session.isClientWindow;
+	var isClientWindow = session.isClientWindow;
 	//局部变量-本地cookie是否为客户端窗口支持
-	const isLocalCookie = session.isLocalCookie;
+	var isLocalCookie = session.isLocalCookie;
 	//局部变量-本地存储是否为客户端窗口支持
-	const isLocalStorage = session.isLocalStorage;
+	var isLocalStorage = session.isLocalStorage;
 	//局部变量-本地会话存储是否为客户端窗口支持
-	const isSessionStorage = session.isSessionStorage;
+	var isSessionStorage = session.isSessionStorage;
 	//api模块
-	const api = __webpack_require__(1);
-	const url = __webpack_require__(3);
+	var api = __webpack_require__(1);
+	var url = __webpack_require__(4);
 	//签名模块
-	const sign = __webpack_require__(46);
+	var sign = __webpack_require__(47);
 	//请求模块
-	const request = __webpack_require__(4);
-	const cryptoJsCore = __webpack_require__(48);
-	const cryptoJsBase64 = __webpack_require__(49);
-	const cryptoJsUtf8 = __webpack_require__(50);
-
+	var request = __webpack_require__(5);
+	var cryptoJsCore = __webpack_require__(49);
+	var cryptoJsBase64 = __webpack_require__(50);
+	var cryptoJsUtf8 = __webpack_require__(51);
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
@@ -10251,13 +10430,13 @@
 	}));
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48));
+			module.exports = exports = factory(__webpack_require__(49));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -10391,13 +10570,13 @@
 	}));
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48));
+			module.exports = exports = factory(__webpack_require__(49));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -10414,13 +10593,13 @@
 	}));
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48));
+			module.exports = exports = factory(__webpack_require__(49));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -10687,13 +10866,13 @@
 	}));
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48), __webpack_require__(53), __webpack_require__(54));
+			module.exports = exports = factory(__webpack_require__(49), __webpack_require__(54), __webpack_require__(55));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -10710,13 +10889,13 @@
 	}));
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48));
+			module.exports = exports = factory(__webpack_require__(49));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -10914,13 +11093,13 @@
 	}));
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48));
+			module.exports = exports = factory(__webpack_require__(49));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -11062,13 +11241,13 @@
 	}));
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(48));
+			module.exports = exports = factory(__webpack_require__(49));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
