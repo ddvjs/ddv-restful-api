@@ -392,6 +392,19 @@
 	    }
 	    return fnc;
 	}();
+	api.util = function apiUtil(util) {
+	    //扩展请求接口
+	    util.extend({
+	        api: api,
+	        get: api.get,
+	        post: api.post,
+	        put: api.put,
+	        del: api.del
+	    });
+	    //delete兼容性问题
+	    util['delete'] = api['delete'];
+	    util['Promise'] = api['Promise'];
+	};
 	if (typeof window !== 'undefined' && window.window === window) {
 	    window.ddvRestFulApi = api;
 	}
