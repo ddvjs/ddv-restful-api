@@ -3,10 +3,10 @@ var path = require('path')
 
 module.exports = {
   entry: {
-    'index': './node/index.js'
+    'api': './lib/index.js'
   },
   output: {
-    path: path.join(__dirname, './browser'),  // 设置打包后的js的输出位置
+    path: path.join(__dirname, './dist'),  // 设置打包后的js的输出位置
     filename: '[name].js'  // 和入口文件的名字相同
   },
   resolve: {
