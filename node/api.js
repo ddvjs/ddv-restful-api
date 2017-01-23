@@ -148,51 +148,6 @@ api.put = function ddvRestFulApiPut (path, req, res) {
 api.del = api['delete'] = function ddvRestFulApiDelete (path, req, res) {
   return api(path, req, res).method('DELETE')
 }
-api.data = function tryGetData (promiseFnRun) {
-  var _this = this
-  var data = Object.create(null)
-  return new api.Promise(function tryGetDataRun (resolve, reject) {
-    var _promise
-    if ((typeof promiseFnRun) === 'function') {
-      _promise = promiseFnRun.call(_this, data)
-    } else if (promiseFnRun instanceof api.Promise) {
-      _promise = promiseFnRun
-    }
-    _this = promiseFnRun = void 0
-    if (_promise instanceof api.Promise) {
-      _promise.then(function resData (res) {
-        // 如果没有return数据就返回一个data
-        res = res === void 0 ? data : res
-        data = void 0
-        return res
-      }).catch(function (e) {
-        // 如果请求出现了异常
-        return api.dataErrorEmit(e)
-      })
-    } else {
-      reject(new api.ApiError('Your argument must be a Promise, or a method, and this method returns Promise after the call'))
-    }
-    _promise = void 0
-  })
-}
-api._onDataErrorArr = []
-api.onDataError = function onDataError (_promise) {
-  if (_promise instanceof api.Promise) {
-    api._onDataErrorArr.push(_promise)
-  } else {
-    throw new api.ApiError('Your argument must be a Promise')
-  }
-  return api
-}
-api.dataErrorEmit = function dataErrorEmit (e) {
-  return new api.Promise(function dataErrorEmitRun (resolve, reject) {
-    if (api._onDataErrorArr && api._onDataErrorArr.length > 0) {
-      api.Promise[(api.dataErrorEmitType === 'all' ? 'all' : 'race')](api._onDataErrorArr).then(resolve).catch(reject)
-    } else {
-      reject(e)
-    }
-  })
-}
 // 实例化构造函数
 api.Api = class DdvRestFulApi extends api.Promise {
   // 构造函数
