@@ -4,8 +4,10 @@
   "description": "ddv-restful-api",
   "main": "./lib/api.js",
   "scripts": {
-    "dist": "webpack",
-    "lint": "eslint --ext .js lib --ignore-pattern node_modules dist"
+    "lint": "eslint --ext .js lib --ignore-pattern dist",
+    "dist": "npm run lint&&webpack",
+    "precommit": "npm run dist",
+    "prepublish": "npm run dist"
   },
   "repository": {
     "type": "git",
