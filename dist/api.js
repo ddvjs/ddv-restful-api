@@ -1672,7 +1672,8 @@ function ajaxbyWindow(o) {
       protocol: o.protocol || 'http:',
       host: o.host,
       port: o.port || '80',
-      path: o.path || '/'
+      path: o.path || '/',
+      query: o.query || ''
     });
     var xhr;
 
@@ -1833,22 +1834,7 @@ api.setSessionInitTrySum = function (sum) {
 api.setSessionInitPath = function (path) {
   session.sessionInitPath = path || session.sessionInitPath;
 };
-// GET请求
-api.get = function ddvRestFulApiGet(path, req, res) {
-  return api(path, req, res).method('GET');
-};
-// POST请求
-api.post = function ddvRestFulApiPost(path, req, res) {
-  return api(path, req, res).method('POST');
-};
-// PUT请求
-api.put = function ddvRestFulApiPut(path, req, res) {
-  return api(path, req, res).method('PUT');
-};
-// DELETE请求
-api.del = api['delete'] = function ddvRestFulApiDelete(path, req, res) {
-  return api(path, req, res).method('DELETE');
-};
+
 api.url = url;
 api.sign = sign;
 api.session = session;
@@ -1860,20 +1846,20 @@ api.prototype = Promise.prototype;
     return Promise[key].apply(Promise, arguments);
   };
 });
+'get post put del delete'.split(' ').forEach(function (key) {
+  key = (key === 'del' ? 'delete' : key) || 'get';
+  api[key] = function ddvRestFulApiMethod() {
+    return api.apply(api, arguments).method(key.toUpperCase());
+  };
+});
 
 api.util = function apiUtil(util) {
   // 扩展请求接口
-  util.extend({
-    api: api,
-    get: api.get,
-    post: api.post,
-    put: api.put,
-    del: api.del,
-    data: api.data
+  'api get post put del delete data'.split(' ').forEach(function (key) {
+    util[key] = key === 'api' ? api : api[key];
   });
-  // delete兼容性问题
-  util['delete'] = api['delete'];
-  util['Promise'] = util['Promise'] || Promise;
+  // 承诺
+  util.Promise = util.Promise || Promise;
 };
 
 api.copyObjByKey = function copyObjByKey(oldObj, newObj, keys) {
