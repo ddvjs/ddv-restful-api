@@ -33,7 +33,7 @@ import * as api from 'ddv-restful-api';
 **引入:**
 
 ```javascript
-var api = ddvRestfulApi;
+var api = ddvRestFulApi;
 ```
 
 ## 配置
