@@ -2,7 +2,7 @@
 // 导出模块
 module.exports = nextTick
 // 工具
-var util = require('../util')
+var util = require('./')
 // 下一进程队列
 var nextTickQueue = []
 // 系统下一进程运行

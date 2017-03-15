@@ -149,6 +149,11 @@ Object.assign(util, {
   }
 })
 
+// nextTick
+Object.assign(util, {
+  nextTick: require('./nextTick.js')
+})
+
 // urlEncode 编码
 Object.assign(util, {
   // 编码对照数组表
