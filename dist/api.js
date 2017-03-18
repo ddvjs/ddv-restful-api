@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,28 +73,252 @@ module.exports =
 
 "use strict";
 
+// 导出模块
 
-var api = module.exports = function ddvRestFulApi(path, req, res) {
-  var _promise = new Promise(function (resolve, reject) {
-    nextTick(function () {
-      apiPromiseRun(_promise, path, req, res).then(resolve, reject);
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+module.exports = util;
+// 创建最后总和
+var createNewidSumLast = 0;
+// 创建最后时间
+var createNewidTimeLast = 0;
+// 创建请求id
+Object.assign(util, {
+  createNewPid: function createNewid(is10) {
+    var r;
+    if (createNewidTimeLast !== util.time()) {
+      createNewidTimeLast = util.time();
+      createNewidSumLast = 0;
+    }
+    r = createNewidTimeLast.toString() + (++createNewidSumLast).toString();
+    // 使用36进制
+    if (!is10) {
+      r = parseInt(r, 10).toString(36);
+    }
+    return r;
+  },
+  // 生成guid
+  createGuid: function createGuid(s) {
+    return (s || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx').replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : r & 0x3 | 0x8;
+      return v.toString(16);
     });
-  });
-  apiPromisePrototype(_promise);
-  _promise._baseUrl = api.baseUrl;
-  return _promise;
-};
-// 下一进程运行
-var nextTick = __webpack_require__(1);
-// api Promise 运行
-var apiPromiseRun = __webpack_require__(11);
-// api Promise 继承
-var apiPromisePrototype = __webpack_require__(10);
-// 允许在 TypeScript 中使用默认导入语法
-api['default'] = api;
-__webpack_require__(12);
-// 对外扩张接口
-__webpack_require__(9);
+  }
+});
+
+// 生成请求id
+Object.assign(util, {
+  // 生成请求id
+  createRequestId: function createRequestId() {
+    var pid, rid, ridLen, ridT, ridNew, i;
+    // 获取16进制的 pid
+    pid = Number(util.createNewPid(true)).toString(16);
+    // 种子
+    rid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    ridNew = '';
+    for (i = rid.length - 1; i >= 0; i--) {
+      ridT = rid[i];
+      if (ridT === 'x') {
+        ridLen = pid.length;
+        ridT = pid ? pid.charAt(ridLen - 1) : 'x';
+        pid = pid.substr(0, ridLen - 1);
+      }
+      ridNew = ridT + ridNew;
+    }
+    rid = util.createGuid(ridNew);
+    i = ridNew = ridT = ridLen = pid = void 0;
+    return rid;
+  }
+});
+
+// 时间工具
+Object.assign(util, {
+  // 获取当前时间开始
+  now: function now() {
+    return new Date().getTime();
+  },
+  // 获取php的时间戳
+  time: function time() {
+    return parseInt(util.now() / 1000);
+  }
+});
+
+// 基本判断
+Object.assign(util, {
+  // 判断是一个方法
+  isFunction: function isFunction(fn) {
+    return typeof fn === 'function';
+  },
+  // 判断是否为一个数组
+  isArray: function isArray() {
+    return Array.isArray.apply(this, arguments);
+  },
+  isNumber: function isNumber(obj) {
+    return (typeof obj === 'string' || typeof obj === 'number') && !util.isArray(obj) && obj - parseFloat(obj) >= 0;
+  },
+  // 判断是否一个标准的global
+  isGlobal: function isGlobal(obj) {
+    return obj !== void 0 && obj === obj.global;
+  },
+  // 类似php里面的inArray
+  inArray: function inArray(a, b) {
+    if (!util.isArray(b)) {
+      return false;
+    }
+    for (var i in b) {
+      if (b[i] === a) {
+        return true;
+      }
+    }
+    return false;
+  }
+});
+
+// 基本工具
+Object.assign(util, {
+  // 克隆
+  clone: function clone(myObj) {
+    var i, myNewObj;
+    if (!(myObj && (typeof myObj === 'undefined' ? 'undefined' : _typeof(myObj)) === 'object')) {
+      return myObj;
+    }
+    if (myObj === null || myObj === undefined) {
+      return myObj;
+    }
+    myNewObj = '';
+    if (Array.isArray(myObj)) {
+      myNewObj = [];
+      for (i = 0; i < myObj.length; i++) {
+        myNewObj.push(myObj[i]);
+      }
+    } else if ((typeof myObj === 'undefined' ? 'undefined' : _typeof(myObj)) === 'object') {
+      myNewObj = {};
+      if (myObj.constructor && myObj.constructor !== Object) {
+        myNewObj = myObj;
+        // 防止克隆ie下克隆  Element 出问题
+      } else if (myObj.innerHTML !== undefined && myObj.innerText !== undefined && myObj.tagName !== undefined && myObj.tabIndex !== undefined) {
+        myNewObj = myObj;
+      } else {
+        for (i in myObj) {
+          myNewObj[i] = clone(myObj[i]);
+        }
+      }
+    }
+    return myNewObj;
+  },
+  // 复制对象，通过制定key
+  copyObjByKey: function copyObjByKey(oldObj, newObj, keys) {
+    keys = keys || [];
+    keys.forEach(function (key) {
+      oldObj[key] = newObj[key] || oldObj[key];
+    });
+  },
+  // 设置错误id
+  setErrorId: function setErrorId(errorId, error) {
+    error.errorId = errorId;
+    error.error_id = errorId;
+    return error;
+  },
+  // 参数强转数组
+  argsToArray: function argsToArray(args) {
+    return Array.prototype.slice.call(args);
+  }
+});
+
+// nextTick
+Object.assign(util, {
+  nextTick: __webpack_require__(11)
+});
+
+// urlEncode 编码
+Object.assign(util, {
+  // 编码对照数组表
+  kEscapedMap: {
+    '!': '%21',
+    '\'': '%27',
+    '(': '%28',
+    ')': '%29',
+    '*': '%2A'
+  },
+  // 编码
+  urlEncode: function urlEncode(string, encodingSlash) {
+    var result = encodeURIComponent(string);
+    result = result.replace(/[!'()*]/g, function ($1) {
+      return util.kEscapedMap[$1];
+    });
+    if (encodingSlash === false) {
+      result = result.replace(/%2F/gi, '/');
+    }
+    return result;
+  },
+  // path编码
+  urlEncodeExceptSlash: function urlEncodeExceptSlash(value) {
+    return util.urlEncode(value, false);
+  }
+});
+// 对象序列化
+Object.assign(util, {
+  // 编码
+  buildParams: function buildParams(data, isQuery) {
+    var r = util._buildParamsToArray(data, '').join('&');
+    if (isQuery) {
+      r = r.replace(/%20/gi, '+');
+    }
+    return r;
+  },
+
+  _buildParamsToArray: function _buildParamsToArray(data, prefix) {
+    var r = [];
+    var i, key, keyt, value;
+    if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
+      // 数组
+      if (util.isArray(data)) {
+        for (i = 0; i < data.length; i++) {
+          // 值
+          value = data[i];
+          // 键
+          keyt = util._buildParamsAddPrefix(i, prefix, (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object');
+          // 递归处理对象和数组
+          if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+            // 插入数组
+            r.push.apply(r, util._buildParamsToArray(value, keyt));
+          } else {
+            // 插入数组
+            r.push(util.urlEncode(keyt) + '=' + util.urlEncode(value));
+          }
+        }
+      } else {
+        for (key in data) {
+          if (!Object.hasOwnProperty.call(data, key)) {
+            continue;
+          }
+          // 值
+          value = data[key];
+          // 键
+          keyt = util._buildParamsAddPrefix(key, prefix);
+          if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+            // 插入数组
+            r.push.apply(r, util._buildParamsToArray(value, keyt));
+          } else {
+            // 插入数组
+            r.push(util.urlEncode(keyt) + '=' + util.urlEncode(value));
+          }
+        }
+      }
+    }
+    return r;
+  },
+  _buildParamsAddPrefix: function _buildParamsAddPrefix(key, prefix, isNotArray) {
+    if (prefix) {
+      return prefix + '[' + (isNotArray !== false ? key : '') + ']';
+    } else {
+      return key;
+    }
+  }
+});
+
+function util() {}
 
 /***/ }),
 /* 1 */
@@ -102,68 +326,289 @@ __webpack_require__(9);
 
 "use strict";
 
+// 导出模块
 
-var nextTickQueue = [];
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var nextTickSys = function () {
-  var fnc;
-  if (typeof process !== 'undefined' && typeof process.nextTick === 'function') {
-    fnc = process.nextTick;
-  } else {
-    'r webkitR mozR msR oR'.split(' ').forEach(function (prefixes) {
-      if (typeof fnc === 'function') {
-        return false;
-      }
-      fnc = window[prefixes + 'equestAnimationFrame'];
-    });
-    fnc = fnc && fnc.bind && fnc.bind(window) || window.setImmediate;
-    if (typeof fnc !== 'function') {
-      if (typeof window === 'undefined' || window.ActiveXObject || !window.postMessage) {
-        fnc = function fnc(f) {
-          setTimeout(f, 0);
-        };
-      } else {
-        window.addEventListener('message', function () {
-          var i = 0;
-          while (i < nextTickQueue.length) {
-            try {
-              nextTickQueue[i++]();
-            } catch (e) {
-              nextTickQueue.splice(0, i);
-              window.postMessage('nextTick!', '*');
-              throw e;
-            }
+module.exports = ddvRestFulApi;
+// 工具
+var util = __webpack_require__(0);
+var url = __webpack_require__(5);
+var request = __webpack_require__(2);
+var sign = __webpack_require__(4);
+// 方法
+function ddvRestFulApi(path, req, res) {
+  var promise = new Promise(function (resolve, reject) {
+    new Promise(function (resolve, reject) {
+      // 下一进程运行
+      util.nextTick(function () {
+        // 这个直接提交，因为该操作仅仅是为了延迟
+        resolve();
+        // 回收
+        resolve = reject = void 0;
+      });
+    }).then(function () {
+      // 初始化接口
+      return apiPromiseInit(promise, path, req, res);
+    }).then(function () {
+      // 回收资源
+      path = req = res = void 0;
+      // api接口运行
+      return apiPromiseRun(promise);
+    }).then(function (_request) {
+      return new Promise(function (resolve, reject) {
+        var r = null;
+        var e = null;
+        var res = _request.serverRes;
+        try {
+          r = JSON.parse(res.body);
+        } catch (e1) {
+          e = e1;
+          e.body = res.body;
+          console.log(e.body);
+        }
+        if (e) {
+          e.statusCode = res.statusCode;
+          e.error_id = res.status;
+          e.message = res.status || 'Unknow Error';
+          reject(e);
+        } else if (r) {
+          if (r.state) {
+            r.statusCode = r.statusCode || r.code || res.statusCode;
+            r.error_id = r.error_id || res.status;
+            r.message = r.message || r.msg || res.status || 'Unknow Error';
+            resolve(r);
+          } else {
+            e = new Error(r.message || r.msg || res.status || 'Unknow Error');
+            e.statusCode = r.statusCode || r.code || res.statusCode;
+            e.error_id = r.error_id || res.status;
+            e.message = r.message || r.msg || res.status || 'Unknow Error';
+            reject(e);
           }
-          nextTickQueue.length = 0;
-        }, true);
-        fnc = function fnc(fn) {
-          if (!nextTickQueue.length) {
-            window.postMessage('nextTick!', '*');
-          }
-          nextTickQueue.push(fn);
-        };
-      }
-    }
-  }
-  return fnc;
-}();
-
-// 下一进程访问
-module.exports = function (fn) {
-  var _this = this;
-  nextTickSys(function () {
-    if (typeof fn === 'function') {
-      fn.call(_this);
-    }
-    _this = fn = void 0;
+        }
+        _request.destroy();
+        _request = resolve = reject = r = e = res = void 0;
+      });
+    }).then(function (res) {
+      util.nextTick(function () {
+        util.isFunction(promise.destroy) && promise.destroy();
+        // 回收资源
+        promise = void 0;
+      });
+      return res;
+    })
+    // 绑定回调
+    .then(resolve, reject);
+    // 回收
+    resolve = reject = void 0;
   });
-  setTimeout(function () {
-    if (typeof fn === 'function') {
-      fn.call(_this);
+  return apiPromiseBaseInit(promise);
+}
+function apiPromiseRun(promise) {
+  return sign(promise.options).then(function (options) {
+    return request(options);
+  }).catch(function (e) {
+    if (parseInt(promise.options.serverRes.statusCode) === 403) {
+      promise.options.isSessionInit = true;
+      // 重新运行一次
+      return apiPromiseRun(promise);
+    } else {
+      // 还是原路抛出错误
+      return Promise.reject(e);
     }
-    _this = fn = void 0;
-  }, 0);
-};
+  });
+}
+function apiPromiseInit(promise, path, req, res) {
+  var options = promise.options;
+  return new Promise(function (resolve, reject) {
+    if ((typeof path === 'undefined' ? 'undefined' : _typeof(path)) === 'object') {
+      promise.path(path.path);
+      promise.sendData(path.data);
+      promise.headers(path.headers);
+      promise.method(path.method);
+      resolve();
+    } else if (typeof path === 'string') {
+      promise.path(path || '/');
+      resolve();
+    } else {
+      var e = new Error('method type error');
+      e.error_id = 'UNKNOW_ERROR';
+      reject(e);
+    }
+  }).then(function () {
+    // 设定请求对象
+    if (req && req.req && req.res) {
+      promise.context(req);
+    } else {
+      promise.req(req);
+      promise.res(res);
+    }
+  }).then(function () {
+    options.serverRes = Object.create(null);
+    options.serverRes.statusCode = 0;
+    options.serverRes.status = 'UNKNOW_ERROR';
+    options.serverRes.body = '';
+  }).then(function () {
+    options.method = options.method || 'GET';
+    options.queryObject = options.queryObject || Object.create(null);
+    if (_typeof(options.query) === 'object') {
+      options.query = '';
+      Object.assign(options.queryObject, options.query);
+    }
+    options.path = options.path || '/';
+    options.path = (options.path.charAt(0) === '/' ? '' : '/') + options.path;
+    options.query = (url('query', options.path) || '').toString();
+    options.path = url('path', options.path) || '/';
+    options.baseUrl = options.baseUrl || ddvRestFulApi.baseUrl || '';
+    options.isServerNode = options.req && options.res && true || false;
+
+    options.host = url('hostname', options.baseUrl);
+    options.port = url('port', options.baseUrl);
+    options.protocol = url('protocol', options.baseUrl);
+    options.request_id = options.request_id || util.createRequestId();
+  }).then(function buildParamsRun() {
+    var str;
+    if (options.queryObject) {
+      str = util.buildParams(options.queryObject, true);
+      if (str) {
+        options.query += (options.query.length > 0 ? '&' : '') + str;
+      }
+    }
+    if (options.method === 'GET') {
+      str = util.buildParams(options.data, true);
+      if (str) {
+        options.query += (options.query.length > 0 ? '&' : '') + str;
+      }
+    } else {
+      options.body = util.buildParams(options.data);
+    }
+    options = void 0;
+  });
+}
+
+function apiPromiseBaseInit(promise) {
+  // 基本参数
+  Object.assign(promise, {
+    options: {
+      path: '/',
+      method: 'GET',
+      headers: Object.create(null),
+      data: Object.create(null),
+      query: Object.create(null),
+      req: null,
+      res: null
+    }
+  });
+  // 基本方法
+  Object.assign(promise, {
+    headers: function headers(headers) {
+      this.options.headers = this.options.headers || Object.create(null);
+      Object.assign(this.options.headers, headers || Object.create(null));
+      return this;
+    },
+    path: function path(path) {
+      this.options.path = (path || '/').toString();
+      return this;
+    },
+    method: function method(method) {
+      this.options.method = (method || this.options.method || 'GET').toString().toUpperCase();
+      return this;
+    },
+    // 发送别名
+    send: function sendData(data) {
+      this.options.data = this.options.data || Object.create(null);
+      Object.assign(this.options.data, data || Object.create(null));
+      return this;
+    },
+    query: function query(data) {
+      this.options.query = this.options.query || Object.create(null);
+      Object.assign(this.options.query, data || Object.create(null));
+      return this;
+    },
+    req: function req(req) {
+      this.options.req = req || this.options.req || null;
+    },
+    res: function res(res) {
+      this.options.res = res || this.options.res || null;
+    },
+    context: function context(context) {
+      if (context.req && context.res) {
+        this.req(context.req);
+        this.res(context.res);
+      } else if (context.requests && context.response) {
+        this.req(context.requests);
+        this.res(context.response);
+      }
+    },
+    // 销毁
+    destroy: function destroy() {
+      util.nextTick.call(this, function () {
+        var key;
+        for (key in this) {
+          if (!Object.hasOwnProperty.call(this, key)) continue;
+          delete this[key];
+        }
+        key = void 0;
+      });
+    }
+  });
+  // 基本方法
+  Object.assign(promise, {
+    // 发送别名
+    sendData: promise.send,
+    // 成功别名
+    success: promise.then,
+    // 错误别名
+    error: promise.catch,
+    // 失败别名
+    fail: promise.catch
+  });
+  return promise;
+}
+
+// 继承使用 Promise 的继承
+ddvRestFulApi.prototype = Promise.prototype;
+// 默认导出支持 - 允许在 TypeScript 中使用默认导入语法
+ddvRestFulApi['default'] = ddvRestFulApi;
+// 复制 Promise 的一些方法
+'all race reject resolve'.split(' ').forEach(function (key) {
+  ddvRestFulApi[key] = function () {
+    return Promise[key].apply(Promise, arguments);
+  };
+});
+// 支持五大请求
+'get post put patch del delete'.split(' ').forEach(function (key) {
+  if (!key) {
+    key = 'get';
+  }
+  ddvRestFulApi[key] = function ddvRestFulApiMethod() {
+    key = key === 'del' ? 'delete' : key;
+    return ddvRestFulApi.apply(ddvRestFulApi, arguments).method(key.toUpperCase());
+  };
+});
+
+Object.assign(ddvRestFulApi, {
+  // 默认安装一下方法
+  utilInitKey: 'api get post put del delete data'.split(' '),
+  // 安装模块
+  util: function apiUtil(util) {
+    // 扩展请求接口
+    ddvRestFulApi.utilInitKey.forEach(function (key) {
+      util[key] = key === 'api' ? ddvRestFulApi : ddvRestFulApi[key];
+    });
+    // 承诺
+    util.Promise = util.Promise || Promise;
+  },
+  // 设置baseUrl
+  setBaseUrl: function setBaseUrl(baseUrl) {
+    ddvRestFulApi.baseUrl = baseUrl;
+  }
+
+});
+
+__webpack_require__(10);
+// 对外扩张接口
+__webpack_require__(9);
 
 /***/ }),
 /* 2 */
@@ -172,113 +617,7 @@ module.exports = function (fn) {
 "use strict";
 
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var request = module.exports = function request(o, callback) {
-  return new request.Request(o, callback);
-};
-var url = __webpack_require__(5);
-var sign = __webpack_require__(4);
-var api = __webpack_require__(0);
-var ajax = __webpack_require__(8);
-var nextTick = __webpack_require__(1);
-request.Request = function ddvRequest(o, callback) {
-  var self = this;
-  // 回调
-  this.callback = callback;
-  // 基本参数初始化
-  this._baseInit(o);
-  // 请求参数编码
-  this._buildParams();
-  // 开始运行
-  this._run().then(function () {
-    if (!self) return;
-    if (self.callback) {
-      self.callback(null, self);
-    } else if (self.destroy) {
-      self.destroy();
-    }
-    self.callback = self = void 0;
-  }).catch(function (e) {
-    if (!self) return;
-    if (self.callback) {
-      self.callback(e, self);
-    } else if (self.destroy) {
-      self.destroy();
-    }
-    self.callback = self = void 0;
-  });
-};
-request.Request.prototype = {
-  _baseInit: function _baseInit(o) {
-    this.serverRes = Object.create(null);
-    this.serverRes.statusCode = 0;
-    this.serverRes.status = 'UNKNOW_ERROR';
-    this.serverRes.body = '';
-    this.input_o = o;
-    this.method = o._method || 'GET';
-    this.headers = o._headers || Object.create(null);
-    this.data = o._data || Object.create(null);
-    this.queryObject = o._query || Object.create(null);
-    this.path = o._path || '/';
-    this.path = (this.path.charAt(0) === '/' ? '' : '/') + this.path;
-    this.query = (url('query', this.path) || '').toString();
-    this.path = url('path', this.path) || '/';
-    this.baseUrl = o._baseUrl || this.baseUrl || request.baseUrl || api.baseUrl || '';
-
-    this.req = o._req || null;
-    this.res = o._res || null;
-    this.isServerNode = this.req && this.res && true || false;
-
-    this.host = url('hostname', this.baseUrl);
-    this.port = url('port', this.baseUrl);
-    this.protocol = url('protocol', this.baseUrl);
-    this.request_id = this.request_id || request.createRequestId();
-  },
-  _buildParams: function _buildParams() {
-    var str;
-    if (this.queryObject) {
-      str = request.buildParams(this.queryObject, true);
-      if (str) {
-        this.query += (this.query.length > 0 ? '&' : '') + str;
-      }
-    }
-    if (this.method === 'GET') {
-      str = request.buildParams(this.data, true);
-      if (str) {
-        this.query += (this.query.length > 0 ? '&' : '') + str;
-      }
-    } else {
-      this.body = request.buildParams(this.data);
-    }
-  },
-  _run: function _run() {
-    var self = this;
-    // 签名
-    return sign(this).then(function (o) {
-      return request.runRequest(o);
-    }).catch(function (e) {
-      if (parseInt(self.serverRes.statusCode) === 403) {
-        self.isSessionInit = true;
-        return self._run();
-      } else {
-        throw e;
-      }
-    });
-  },
-  destroy: function destroy() {
-    nextTick.call(this, function () {
-      var key;
-      for (key in this) {
-        if (!Object.hasOwnProperty.call(this, key)) continue;
-        delete this[key];
-      }
-      key = void 0;
-    });
-  }
-};
-// 发送请求
-request.runRequest = function runRequest(o) {
+module.exports = function runRequest(o) {
   return ajax(o).then(function (serverRes) {
     Object.assign(o.serverRes, serverRes);
     var e;
@@ -292,140 +631,12 @@ request.runRequest = function runRequest(o) {
       e.message = o.serverRes.message || o.serverRes.status || 'Unknow Error';
       throw e;
     }
+  }).catch(function (e) {
+    Object.assign(o.serverRes, e);
+    return Promise.reject(e);
   });
 };
-
-request.kEscapedMap = {
-  '!': '%21',
-  '\'': '%27',
-  '(': '%28',
-  ')': '%29',
-  '*': '%2A'
-};
-// path编码
-request.urlEncodeExceptSlash = function (value) {
-  return request.urlEncode(value, false);
-};
-// 编码
-request.urlEncode = function (string, encodingSlash) {
-  var result = encodeURIComponent(string);
-  result = result.replace(/[!'()*]/g, function ($1) {
-    return request.kEscapedMap[$1];
-  });
-  if (encodingSlash === false) {
-    result = result.replace(/%2F/gi, '/');
-  }
-  return result;
-};
-// 编码
-request.buildParams = function (data, isQuery) {
-  var r = request._buildParams(data, '').join('&');
-  if (isQuery) {
-    r = r.replace(/%20/gi, '+');
-  }
-  return r;
-};
-request._buildParams = function (data, prefix) {
-  var r = [];
-  var i, key, keyt, value;
-  if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === 'object') {
-    // 数组
-    if (Array.isArray(data)) {
-      for (i = 0; i < data.length; i++) {
-        // 值
-        value = data[i];
-        // 键
-        keyt = request._buildParamsAddPrefix(i, prefix, (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object');
-        // 递归处理对象和数组
-        if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
-          // 插入数组
-          r.push.apply(r, request._buildParams(value, keyt));
-        } else {
-          // 插入数组
-          r.push(request.urlEncode(keyt) + '=' + request.urlEncode(value));
-        }
-      }
-    } else {
-      for (key in data) {
-        if (!Object.hasOwnProperty.call(data, key)) {
-          continue;
-        }
-        // 值
-        value = data[key];
-        // 键
-        keyt = request._buildParamsAddPrefix(key, prefix);
-        if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
-          // 插入数组
-          r.push.apply(r, request._buildParams(value, keyt));
-        } else {
-          // 插入数组
-          r.push(request.urlEncode(keyt) + '=' + request.urlEncode(value));
-        }
-      }
-    }
-  }
-  return r;
-};
-request._buildParamsAddPrefix = function (key, prefix, isNotArray) {
-  if (prefix) {
-    return prefix + '[' + (isNotArray !== false ? key : '') + ']';
-  } else {
-    return key;
-  }
-};
-// 生成请求id
-request.createRequestId = function createRequestId() {
-  var pid, rid, ridLen, ridT, ridNew, i;
-  // 获取16进制的 pid
-  pid = Number(request.createNewPid(true)).toString(16);
-  // 种子
-  rid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-  ridNew = '';
-  for (i = rid.length - 1; i >= 0; i--) {
-    ridT = rid[i];
-    if (ridT === 'x') {
-      ridLen = pid.length;
-      ridT = pid ? pid.charAt(ridLen - 1) : 'x';
-      pid = pid.substr(0, ridLen - 1);
-    }
-    ridNew = ridT + ridNew;
-  }
-  rid = request.createGuid(ridNew);
-  i = ridNew = ridT = ridLen = pid = void 0;
-  return rid;
-};
-var createNewidSumLast, createNewidTimeLast;
-createNewidSumLast = 0;
-createNewidTimeLast = 0;
-request.createNewPid = function createNewid(is10) {
-  var r;
-  if (createNewidTimeLast !== request.time()) {
-    createNewidTimeLast = request.time();
-    createNewidSumLast = 0;
-  }
-  r = createNewidTimeLast.toString() + (++createNewidSumLast).toString();
-  // 使用36进制
-  if (!is10) {
-    r = parseInt(r, 10).toString(36);
-  }
-  return r;
-};
-// 生成guid
-request.createGuid = function createGuid(s) {
-  return (s || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx').replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0;
-    var v = c === 'x' ? r : r & 0x3 | 0x8;
-    return v.toString(16);
-  });
-};
-// 获取当前时间开始
-request.now = function now() {
-  return new Date().getTime();
-};
-// 获取php的时间戳
-request.time = function time() {
-  return parseInt(request.now() / 1000);
-};
+var ajax = __webpack_require__(6);
 
 /***/ }),
 /* 3 */
@@ -435,11 +646,75 @@ request.time = function time() {
 
 
 /* global localStorage sessionStorage VS_COOKIEDM */
+// 导出 session 模块
+module.exports = session;
+// 工具
+var util = __webpack_require__(0);
+// api模块
+var api = __webpack_require__(1);
+// url模块
+var url = __webpack_require__(5);
+// 签名模块
+var sign = __webpack_require__(4);
+// 请求模块
+var request = __webpack_require__(2);
+// 编码加密模块
+var cryptoJsCore = __webpack_require__(7);
+// 编码base64模块
+var cryptoJsBase64 = __webpack_require__(8);
+// var cryptoJsUtf8 =
+__webpack_require__(13);
 var getSessionTrueCbs = [];
 var getSessionInitCbs = [];
 var _getSessionTrueDataCbsIng = false;
 var _getSessionInitCbsIng = false;
-var session = module.exports = {
+// 对外api接口模块
+Object.assign(session, {
+  // 设置是否使用长存储
+  setLongStorage: function setLongStorage(isUseLong) {
+    session.isLongStorage = Boolean(isUseLong);
+  },
+  // 设置是否使用长存储
+  setSessionInitTrySum: function setSessionInitTrySum(sum) {
+    session.initTrySum = sum || session.initTrySum;
+  },
+  // 设置初始化session的path
+  setSessionInitPath: function setSessionInitPath(path) {
+    session.sessionInitPath = path || session.sessionInitPath;
+  }
+});
+// 对外 cookie 编码 接口模块
+Object.assign(session, {
+  // 解码
+  unescape: function (_unescape) {
+    function unescape(_x) {
+      return _unescape.apply(this, arguments);
+    }
+
+    unescape.toString = function () {
+      return _unescape.toString();
+    };
+
+    return unescape;
+  }(function (str) {
+    return unescape(str || '');
+  }),
+  // 编码
+  escape: function (_escape) {
+    function escape(_x2) {
+      return _escape.apply(this, arguments);
+    }
+
+    escape.toString = function () {
+      return _escape.toString();
+    };
+
+    return escape;
+  }(function (str) {
+    return escape(str || '');
+  })
+});
+Object.assign(session, {
   // 会话初始化
   init: function init(o) {
     o = o || Object.create(null);
@@ -484,14 +759,14 @@ var session = module.exports = {
           var cbt;
           if (o && o.req && o.req._getSessionInitCbs) {
             while (cbt = o.req._getSessionInitCbs.shift()) {
-              if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
+              if (cbt && cbt[0] && cbt[2] && util.isFunction(cbt[0])) {
                 cbt[0](cbt[2]);
               }
               cbt = void 0;
             }
           } else if (session.isClientWindow && getSessionInitCbs) {
             while (cbt = getSessionInitCbs.shift()) {
-              if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
+              if (cbt && cbt[0] && cbt[2] && util.isFunction(cbt[0])) {
                 cbt[0](cbt[2]);
               }
               cbt = void 0;
@@ -503,14 +778,14 @@ var session = module.exports = {
           var cbt;
           if (o && o.req && o.req._getSessionInitCbs) {
             while (cbt = o.req._getSessionInitCbs.shift()) {
-              if (cbt && cbt[1] && typeof cbt[1] === 'function') {
+              if (cbt && cbt[1] && util.isFunction(cbt[1])) {
                 cbt[1](e);
               }
               cbt = void 0;
             }
           } else if (session.isClientWindow && getSessionInitCbs) {
             while (cbt = getSessionInitCbs.shift()) {
-              if (cbt && cbt[1] && typeof cbt[1] === 'function') {
+              if (cbt && cbt[1] && util.isFunction(cbt[1])) {
                 cbt[1](e);
               }
               cbt = void 0;
@@ -547,7 +822,7 @@ var session = module.exports = {
         return session.createCard(o);
       }
     }).then(function (o) {
-      o.request_id = o.request_id || request.createRequestId();
+      o.request_id = o.request_id || util.createRequestId();
 
       // 授权字符串
       var authorization = 'session-init-v1';
@@ -557,7 +832,7 @@ var session = module.exports = {
       authorization += '/' + sign.getUTCServerTime(o.sessionData.difference_time || 0) + '/' + '1800';
       var signingKey = sign.HmacSHA256(authorization, o.sessionData.session_key || 'session_key');
       // 生成加密key
-      authorization += '/' + request.createGuid();
+      authorization += '/' + util.createGuid();
       authorization += '/' + sign.HmacSHA256(authorization, signingKey);
 
       o.headers = o.headers || Object.create(null);
@@ -574,7 +849,7 @@ var session = module.exports = {
       o.serverRes.status = 'UNKNOW_ERROR';
       o.serverRes.body = '';
       // 返回一个请求
-      return request.runRequest(o);
+      return request(o);
     }).then(function (o) {
       return new Promise(function (resolve, reject) {
         var r = null;
@@ -619,9 +894,9 @@ var session = module.exports = {
         }
         var sessionData = res.session_data;
         // 服务器时间
-        sessionData.server_time = sessionData.server_time || request.time();
+        sessionData.server_time = sessionData.server_time || util.time();
         // 本地时间
-        sessionData.local_time = request.time();
+        sessionData.local_time = util.time();
         // 服务器时间减去本地时间
         sessionData.difference_time = sessionData.server_time - sessionData.local_time;
         // 到期时间
@@ -629,7 +904,7 @@ var session = module.exports = {
         if (sessionData.expires_time !== undefined && sessionData.expires_time !== null) {
           sessionData.expires_time += sessionData.difference_time;
         } else {
-          sessionData.expires_time = request.time() + 60 * 60 * 24 * 7;
+          sessionData.expires_time = util.time() + 60 * 60 * 24 * 7;
         }
         // 获取会话数据
         session.setData(o, JSON.stringify(sessionData)).then(resolve).catch(reject);
@@ -650,7 +925,7 @@ var session = module.exports = {
     // 默认0次参数
     o.initTrySum = o.initTrySum || session.initTrySum || 3;
     // url
-    o.baseUrl = o.baseUrl || request.baseUrl || api.baseUrl || '';
+    o.baseUrl = o.baseUrl || api.baseUrl || '';
     o.req = o.req || null;
     o.res = o.res || null;
     // 是否在node服务器运行
@@ -731,7 +1006,7 @@ var session = module.exports = {
         // 基本需要的数据检测
         isSessionDataPass = isSessionDataPass && o.sessionData && o.sessionData.session_id && o.sessionData.session_key && o.sessionData.session_card;
         // 检测事件
-        isSessionDataPass = isSessionDataPass && o.sessionData.expires_time && request.time() < o.sessionData.expires_time - 5;
+        isSessionDataPass = isSessionDataPass && o.sessionData.expires_time && util.time() < o.sessionData.expires_time - 5;
         // 为了保证没有问题，提前5秒钟过期
         if (isSessionDataPass) {
           // 下一步
@@ -767,16 +1042,16 @@ var session = module.exports = {
       var cbt;
       if (sessionO.req && sessionO.req._getSessionTrueDataCbs) {
         while (cbt = sessionO.req._getSessionTrueDataCbs.shift()) {
-          if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
-            api.copyObjByKey(cbt[2], sessionO, keys);
+          if (cbt && cbt[0] && cbt[2] && util.isFunction(cbt[0])) {
+            util.copyObjByKey(cbt[2], sessionO, keys);
             cbt[0](cbt[2]);
           }
           cbt = void 0;
         }
       } else if (session.isClientWindow && getSessionTrueCbs) {
         while (cbt = getSessionTrueCbs.shift()) {
-          if (cbt && cbt[0] && cbt[2] && typeof cbt[0] === 'function') {
-            api.copyObjByKey(cbt[2], sessionO, keys);
+          if (cbt && cbt[0] && cbt[2] && util.isFunction(cbt[0])) {
+            util.copyObjByKey(cbt[2], sessionO, keys);
             cbt[0](cbt[2]);
           }
           cbt = void 0;
@@ -788,14 +1063,14 @@ var session = module.exports = {
       var cbt;
       if (sessionO.req && sessionO.req._getSessionTrueDataCbs) {
         while (cbt = sessionO.req._getSessionTrueDataCbs.shift()) {
-          if (cbt && cbt[1] && typeof cbt[1] === 'function') {
+          if (cbt && cbt[1] && util.isFunction(cbt[1])) {
             cbt[1](e);
           }
           cbt = void 0;
         }
       } else if (session.isClientWindow && getSessionTrueCbs) {
         while (cbt = getSessionTrueCbs.shift()) {
-          if (cbt && cbt[1] && typeof cbt[1] === 'function') {
+          if (cbt && cbt[1] && util.isFunction(cbt[1])) {
             cbt[1](e);
           }
           cbt = void 0;
@@ -871,13 +1146,13 @@ var session = module.exports = {
     var cookiename;
     try {
       cookiename = o.cookieNameEnCode;
-      o.sessionDataStr = session._getCookiesServer(cookiename, o.req) || o.res && o.res.cookieDdvRestfulApiStr || o.sessionDataStr;
+      o.sessionDataStr = o.res && o.res.cookieDdvRestfulApiStr || session._getCookiesServer(cookiename, o.req) || o.sessionDataStr;
       // 本地存储模块
-      if (typeof resolve === 'function') {
+      if (util.isFunction(resolve)) {
         resolve(o);
       }
     } catch (e) {
-      if (typeof reject === 'function') {
+      if (util.isFunction(reject)) {
         reject(e);
       }
     }
@@ -903,11 +1178,11 @@ var session = module.exports = {
         session._setCookiesServer(o.req, o.res, cookiename, data, session.getExpiresDate('365', '12', '60'));
       }
 
-      if (typeof resolve === 'function') {
+      if (util.isFunction(resolve)) {
         resolve(o);
       }
     } catch (e) {
-      if (typeof reject === 'function') {
+      if (util.isFunction(reject)) {
         reject(e);
       }
     }
@@ -927,7 +1202,7 @@ var session = module.exports = {
     if (!res) {
       return;
     }
-    if (typeof res.cookie === 'function') {
+    if (util.isFunction(res.cookie)) {
       t = { domain: domain || '', path: path || '/', secure: Boolean(isSecure) };
       if (t.domain) {
         delete t.domain;
@@ -1020,11 +1295,11 @@ var session = module.exports = {
         session._setCookiesClient(cookiename, data, session.getExpiresDate('365', '12', '60'));
       }
 
-      if (typeof resolve === 'function') {
+      if (util.isFunction(resolve)) {
         resolve(o);
       }
     } catch (e) {
-      if (typeof reject === 'function') {
+      if (util.isFunction(reject)) {
         reject(e);
       }
     }
@@ -1090,51 +1365,20 @@ var session = module.exports = {
     a = a.join(';');
     return a;
   },
-  isNumber: function isNumber(obj) {
-    return (typeof obj === 'string' || typeof obj === 'number') && !Array.isArray(obj) && obj - parseFloat(obj) >= 0;
-  },
   // 获取GMT格式的过期时间
   getExpiresDate: function getExpiresDate(days, hours, minutes, seconds) {
     var ExpiresDate = new Date();
-    if (session.isNumber(days) && session.isNumber(hours) && session.isNumber(minutes)) {
+    if (util.isNumber(days) && util.isNumber(hours) && util.isNumber(minutes)) {
       ExpiresDate.setDate(ExpiresDate.getDate() + parseInt(days));
       ExpiresDate.setHours(ExpiresDate.getHours() + parseInt(hours));
       ExpiresDate.setMinutes(ExpiresDate.getMinutes() + parseInt(minutes));
-      if (session.isNumber(seconds)) {
+      if (util.isNumber(seconds)) {
         ExpiresDate.setSeconds(ExpiresDate.getSeconds() + parseInt(seconds));
       }
     }
     return ExpiresDate.toGMTString();
-  },
-  // 解码
-  unescape: function (_unescape) {
-    function unescape(_x) {
-      return _unescape.apply(this, arguments);
-    }
-
-    unescape.toString = function () {
-      return _unescape.toString();
-    };
-
-    return unescape;
-  }(function (str) {
-    return unescape(str || '');
-  }),
-  // 编码
-  escape: function (_escape) {
-    function escape(_x2) {
-      return _escape.apply(this, arguments);
-    }
-
-    escape.toString = function () {
-      return _escape.toString();
-    };
-
-    return escape;
-  }(function (str) {
-    return escape(str || '');
-  })
-};
+  }
+});
 
 // 局部变量-是否为客户端窗口
 session.isClientWindow = typeof window !== 'undefined' && window.window === window && typeof window.document !== 'undefined';
@@ -1158,17 +1402,7 @@ if (session.isClientWindow) {
   } catch (e) {}
 }
 
-// api模块
-var api = __webpack_require__(0);
-var url = __webpack_require__(5);
-// 签名模块
-var sign = __webpack_require__(4);
-// 请求模块
-var request = __webpack_require__(2);
-var cryptoJsCore = __webpack_require__(6);
-var cryptoJsBase64 = __webpack_require__(7);
-// var cryptoJsUtf8 =
-__webpack_require__(14);
+function session() {}
 
 /***/ }),
 /* 4 */
@@ -1177,12 +1411,18 @@ __webpack_require__(14);
 "use strict";
 
 // 导出签名模块
+// 工具
 
+var util = __webpack_require__(0);
 var sign = module.exports = Object.assign(function sign(o) {
   return sign._signRun(o);
 }, {
   headersPrefix: 'x-ddv-',
   excludeHeaderKeys: ['host', 'content-length', 'content-type', 'content-md5'],
+  // 设置headersPrefix
+  setHeadersPrefix: function setHeadersPrefix(prefix) {
+    sign.headersPrefix = prefix;
+  },
   // 签名头
   _signRun: function _signRun(o) {
     return new Promise(function signInit(resolve, reject) {
@@ -1216,7 +1456,7 @@ var sign = module.exports = Object.assign(function sign(o) {
       var signingKey = sign.HmacSHA256(o.Authorization, sessionKey);
 
       // 拼接内容
-      var canonicalRequest = o.method + o.n + request.urlEncodeExceptSlash(o.path) + o.n + o.query + o.n + o.authCanonicalHeadersStr;
+      var canonicalRequest = o.method + o.n + util.urlEncodeExceptSlash(o.path) + o.n + o.query + o.n + o.authCanonicalHeadersStr;
       // 使用signKey和标准请求串完成签名
       var sessionSign = sign.HmacSHA256(canonicalRequest, signingKey);
       // 组成最终签名串
@@ -1241,7 +1481,7 @@ var sign = module.exports = Object.assign(function sign(o) {
     // 签名的头
     o.authCanonicalHeadersStr = [];
 
-    o.headersPrefix = o.headersPrefix || sign.headersPrefix || request.headersPrefix;
+    o.headersPrefix = o.headersPrefix || sign.headersPrefix;
     o.headersPrefixLen = o.headersPrefix.length;
     var keyLower, key, value;
     var headersOld = o.headers;
@@ -1255,7 +1495,7 @@ var sign = module.exports = Object.assign(function sign(o) {
       keyLower = key.toLowerCase();
       // 判断一下
       if (sign.excludeHeaderKeys.indexOf(keyLower) > -1 || keyLower.substr(0, o.headersPrefixLen) === o.headersPrefix) {
-        o.authCanonicalHeadersStr.push(request.urlEncode(keyLower) + ':' + request.urlEncode(value));
+        o.authCanonicalHeadersStr.push(util.urlEncode(keyLower) + ':' + util.urlEncode(value));
         o.authHeadersStr.push(keyLower);
       }
     }
@@ -1347,7 +1587,7 @@ var sign = module.exports = Object.assign(function sign(o) {
     // 默认换行
     o.n = o.n || '\n';
     // 请求id
-    o.request_id = o.request_id || request.createRequestId();
+    o.request_id = o.request_id || util.createRequestId();
     // 请求方式
     o.method = (o.method || 'GET').toString().toUpperCase();
     // 强制是字符串
@@ -1417,15 +1657,14 @@ var sign = module.exports = Object.assign(function sign(o) {
 });
 // 引入签名会话模块
 // 引入请求模块
-var request = __webpack_require__(2);
 var session = __webpack_require__(3);
-var cryptoJsCore = __webpack_require__(6);
+var cryptoJsCore = __webpack_require__(7);
 // var cryptoJsMd5 =
-__webpack_require__(16);
-// var cryptoJsHmacSha256 =
 __webpack_require__(15);
-var cryptoJsBase64 = __webpack_require__(7);
-var cryptoJsHex = __webpack_require__(13);
+// var cryptoJsHmacSha256 =
+__webpack_require__(14);
+var cryptoJsBase64 = __webpack_require__(8);
+var cryptoJsHex = __webpack_require__(12);
 
 /***/ }),
 /* 5 */
@@ -1641,25 +1880,13 @@ module.exports = function () {
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
-
-module.exports = require("crypto-js/core");
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = require("crypto-js/enc-base64");
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var http = __webpack_require__(17);
-var https = __webpack_require__(18);
+var http = __webpack_require__(16);
+var https = __webpack_require__(17);
 var session = __webpack_require__(3);
 var isWindow = typeof window !== 'undefined' && window.window === window;
 // 发送请求
@@ -1803,71 +2030,40 @@ function parseUrl(obj) {
 }
 
 /***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("crypto-js/core");
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = require("crypto-js/enc-base64");
+
+/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var api = __webpack_require__(0);
-var url = __webpack_require__(5);
-var sign = __webpack_require__(4);
-var session = __webpack_require__(3);
-var request = __webpack_require__(2);
-// 设置baseUrl
-api.setBaseUrl = function (baseUrl) {
-  request.baseUrl = api.baseUrl = baseUrl;
-};
-// 设置headersPrefix
-api.setHeadersPrefix = function (prefix) {
-  sign.headersPrefix = request.headersPrefix = api.headersPrefix = prefix;
-};
-// 设置是否使用长存储
-api.setLongStorage = function (isUseLong) {
-  session.isLongStorage = Boolean(isUseLong);
-};
-// 设置是否使用长存储
-api.setSessionInitTrySum = function (sum) {
-  session.initTrySum = sum || session.initTrySum;
-};
-// 设置初始化session的path
-api.setSessionInitPath = function (path) {
-  session.sessionInitPath = path || session.sessionInitPath;
-};
-
-api.url = url;
-api.sign = sign;
-api.session = session;
-api.request = request;
+var api = __webpack_require__(1);
+api.url = __webpack_require__(5);
+api.ajax = __webpack_require__(6);
+api.sign = __webpack_require__(4);
+api.session = __webpack_require__(3);
+api.request = __webpack_require__(2);
+api.nextTick = __webpack_require__(0).nextTick;
 api.Promise = Promise;
-api.prototype = Promise.prototype;
-'all race reject resolve'.split(' ').forEach(function (key) {
-  api[key] = function () {
-    return Promise[key].apply(Promise, arguments);
-  };
-});
-'get post put del delete'.split(' ').forEach(function (key) {
-  key = (key === 'del' ? 'delete' : key) || 'get';
-  api[key] = function ddvRestFulApiMethod() {
-    return api.apply(api, arguments).method(key.toUpperCase());
-  };
-});
-
-api.util = function apiUtil(util) {
-  // 扩展请求接口
-  'api get post put del delete data'.split(' ').forEach(function (key) {
-    util[key] = key === 'api' ? api : api[key];
-  });
-  // 承诺
-  util.Promise = util.Promise || Promise;
-};
-
-api.copyObjByKey = function copyObjByKey(oldObj, newObj, keys) {
-  keys = keys || [];
-  keys.forEach(function (key) {
-    oldObj[key] = newObj[key] || oldObj[key];
-  });
-};
+// 设置headersPrefix
+api.setHeadersPrefix = api.sign.setHeadersPrefix;
+// 设置是否使用长存储
+api.setLongStorage = api.session.setLongStorage;
+// 设置是否使用长存储
+api.setSessionInitTrySum = api.session.setSessionInitTrySum;
+// 设置初始化session的path
+api.setSessionInitPath = api.session.setSessionInitPath;
 
 if (typeof window !== 'undefined' && window.window === window) {
   window.ddvRestFulApi = api;
@@ -1879,180 +2075,24 @@ if (typeof window !== 'undefined' && window.window === window) {
 
 "use strict";
 
-// 下一进程运行
-
-var nextTick = __webpack_require__(1);
-// 导出模块
-module.exports = function apiPromisePrototype(_promise) {
-  _promise._path = '/';
-  _promise._method = 'GET';
-  _promise._headers = Object.create(null);
-  _promise._data = Object.create(null);
-  _promise._query = Object.create(null);
-  _promise.headers = function headers(headers) {
-    this._headers = this._headers || Object.create(null);
-    Object.assign(this._headers, headers || Object.create(null));
-    return this;
-  };
-  _promise.path = function path(path) {
-    this._path = (path || '/').toString();
-    return this;
-  };
-  _promise.method = function method(method) {
-    this._method = (method || this._method || 'GET').toString().toUpperCase();
-    return this;
-  };
-
-  // 发送别名
-  _promise.send = _promise.sendData = function sendData(data) {
-    this._data = this._data || Object.create(null);
-    Object.assign(this._data, data || Object.create(null));
-    return this;
-  };
-  _promise.query = function query(data) {
-    this._query = this._query || Object.create(null);
-    Object.assign(this._query, data || Object.create(null));
-    return this;
-  };
-  _promise.req = function req(req) {
-    this._req = req || this._req || null;
-  };
-  _promise.res = function res(res) {
-    this._res = res || this._res || null;
-  };
-  _promise.context = function context(context) {
-    if (context.req && context.res) {
-      this.req(context.req);
-      this.res(context.res);
-    } else if (context.requests && context.response) {
-      this.req(context.requests);
-      this.res(context.response);
-    }
-  };
-  _promise._apiDestroy = function _apiDestroy() {
-    nextTick.call(this, function () {
-      var key;
-      for (key in this) {
-        if (!Object.hasOwnProperty.call(this, key)) continue;
-        delete this[key];
-      }
-      key = void 0;
-    });
-  };
-  // 成功别名
-  _promise.success = _promise.then;
-  // 错误别名
-  _promise.error = _promise.catch;
-  // 失败别名
-  _promise.fail = _promise.catch;
-};
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-// 下一进程运行
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var nextTick = __webpack_require__(1);
-// 请求模块
-var request = __webpack_require__(2);
-// 导出模块
-module.exports = function apiPromiseRun(_promise, path, req, res) {
-  return new Promise(function (resolve, reject) {
-    if ((typeof path === 'undefined' ? 'undefined' : _typeof(path)) === 'object') {
-      _promise.path(path.path);
-      _promise.sendData(path.data);
-      _promise.headers(path.headers);
-      _promise.method(path.method);
-      resolve();
-    } else if (typeof path === 'string') {
-      _promise.path(path || '/');
-      resolve();
-    } else {
-      var e = new Error('method type error');
-      e.error_id = 'UNKNOW_ERROR';
-      reject(e);
-    }
-  }).then(function () {
-    // 设定请求对象
-    if (req && req.req && req.res) {
-      _promise.context(req);
-    } else {
-      _promise.req(req);
-      _promise.res(res);
-    }
-  }).then(function () {
-    return new Promise(function (resolve, reject) {
-      nextTick(function () {
-        request(_promise, function (e, res) {
-          e ? reject(e) : resolve(res);
-        });
-      });
-    });
-  }).then(function (_request) {
-    return new Promise(function (resolve, reject) {
-      var r = null;
-      var e = null;
-      var res = _request.serverRes;
-      try {
-        r = JSON.parse(res.body);
-      } catch (e1) {
-        e = e1;
-        e.body = res.body;
-        console.log(e.body);
-      }
-      if (e) {
-        e.statusCode = res.statusCode;
-        e.error_id = res.status;
-        e.message = res.status || 'Unknow Error';
-        reject(e);
-      } else if (r) {
-        if (r.state) {
-          r.statusCode = r.statusCode || r.code || res.statusCode;
-          r.error_id = r.error_id || res.status;
-          r.message = r.message || r.msg || res.status || 'Unknow Error';
-          resolve(r);
-        } else {
-          e = new Error(r.message || r.msg || res.status || 'Unknow Error');
-          e.statusCode = r.statusCode || r.code || res.statusCode;
-          e.error_id = r.error_id || res.status;
-          e.message = r.message || r.msg || res.status || 'Unknow Error';
-          reject(e);
-        }
-      }
-      _request.destroy();
-      _request = resolve = reject = r = e = res = void 0;
-    });
-  });
-};
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var api = __webpack_require__(0);
+var api = __webpack_require__(1);
+var util = __webpack_require__(0);
 
 api.data = function tryGetData(context, promiseFnRun, _dataOld) {
-  if (typeof context === 'function' || context instanceof Promise) {
+  if (util.isFunction(context) || context instanceof Promise) {
     promiseFnRun = context;
     context = void 0;
   }
   var promiseFnReload = void 0;
-  var _this = this;
+  var self = this;
   var data = Object && Object.create ? Object.create(null) : {};
   return new Promise(function tryGetDataRun(resolve, reject) {
     var _promise;
-    if (typeof promiseFnRun === 'function') {
-      _promise = promiseFnRun.call(_this, data, function (inputData) {
+    if (util.isFunction(promiseFnRun)) {
+      _promise = promiseFnRun.call(self, data, function (inputData) {
         if (data && inputData && (typeof inputData === 'undefined' ? 'undefined' : _typeof(inputData)) === 'object') {
           Object.assign(data, inputData);
         }
@@ -2061,7 +2101,7 @@ api.data = function tryGetData(context, promiseFnRun, _dataOld) {
     } else if (promiseFnRun instanceof Promise) {
       _promise = promiseFnRun;
     }
-    _this = promiseFnRun = void 0;
+    self = promiseFnRun = void 0;
     // 必须是Promise实例化的对象
     if (_promise instanceof Promise) {
       _promise.then(function resData(res) {
@@ -2113,7 +2153,7 @@ api.dataErrorEmit = function dataErrorEmit(input) {
   });
   if (context && context.isServer) {
     // 有上下文 并且是服务器端
-    if (typeof api._onDataServerErrorFn === 'function') {
+    if (util.isFunction(api._onDataServerErrorFn)) {
       _promise = _promise.catch(function onCatch(e) {
         e = api._onDataServerErrorFn(e, context);
         context = void 0;
@@ -2122,7 +2162,7 @@ api.dataErrorEmit = function dataErrorEmit(input) {
     }
   } else {
     // 否则统一客户端方法处理
-    if (typeof api._onDataClientErrorFn === 'function') {
+    if (util.isFunction(api._onDataClientErrorFn)) {
       _promise = _promise.catch(function onCatch(e) {
         e = api._onDataClientErrorFn(e, context);
         context = void 0;
@@ -2134,49 +2174,122 @@ api.dataErrorEmit = function dataErrorEmit(input) {
 };
 
 /***/ }),
-/* 13 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// 导出模块
+
+module.exports = nextTick;
+// 工具
+var util = __webpack_require__(0);
+// 下一进程队列
+var nextTickQueue = [];
+// 系统下一进程运行
+var nextTickSys = function () {
+  var fnc;
+  if (typeof process !== 'undefined' && util.isFunction(process.nextTick)) {
+    fnc = process.nextTick;
+  } else {
+    'r webkitR mozR msR oR'.split(' ').forEach(function (prefixes) {
+      if (util.isFunction(fnc)) {
+        return false;
+      }
+      fnc = window[prefixes + 'equestAnimationFrame'];
+    });
+    fnc = fnc && fnc.bind && fnc.bind(window) || window.setImmediate;
+    if (!util.isFunction(fnc)) {
+      if (typeof window === 'undefined' || window.ActiveXObject || !window.postMessage) {
+        fnc = function fnc(f) {
+          setTimeout(f, 0);
+        };
+      } else {
+        window.addEventListener('message', function () {
+          var i = 0;
+          while (i < nextTickQueue.length) {
+            try {
+              nextTickQueue[i++]();
+            } catch (e) {
+              nextTickQueue.splice(0, i);
+              window.postMessage('nextTick!', '*');
+              throw e;
+            }
+          }
+          nextTickQueue.length = 0;
+        }, true);
+        fnc = function fnc(fn) {
+          if (!nextTickQueue.length) {
+            window.postMessage('nextTick!', '*');
+          }
+          nextTickQueue.push(fn);
+        };
+      }
+    }
+  }
+  return fnc;
+}();
+// 下一进程访问
+function nextTick(fn) {
+  var self = this;
+  nextTickSys(function () {
+    if (util.isFunction(fn)) {
+      fn.call(self);
+    }
+    self = fn = void 0;
+  });
+  setTimeout(function () {
+    if (util.isFunction(fn)) {
+      fn.call(self);
+    }
+    self = fn = void 0;
+  }, 0);
+}
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/enc-hex");
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/enc-utf8");
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/hmac-sha256");
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/md5");
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("http");
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("https");
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(0);
+module.exports = __webpack_require__(1);
 
 /***/ })
 /******/ ]);
