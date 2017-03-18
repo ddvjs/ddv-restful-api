@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -228,7 +228,7 @@ Object.assign(util, {
 
 // nextTick
 Object.assign(util, {
-  nextTick: __webpack_require__(11)
+  nextTick: __webpack_require__(12)
 });
 
 // urlEncode 编码
@@ -336,6 +336,8 @@ var util = __webpack_require__(0);
 var url = __webpack_require__(5);
 var request = __webpack_require__(2);
 var sign = __webpack_require__(4);
+var EventEmitter = __webpack_require__(9);
+Object.assign(ddvRestFulApi, EventEmitter.prototype, new EventEmitter());
 // 方法
 function ddvRestFulApi(path, req, res) {
   var promise = new Promise(function (resolve, reject) {
@@ -589,7 +591,7 @@ ddvRestFulApi['default'] = ddvRestFulApi;
 
 Object.assign(ddvRestFulApi, {
   // 默认安装一下方法
-  utilInitKey: 'api get post put del delete data'.split(' '),
+  utilInitKey: 'api get post put del delete data addListener on once removeListener removeAllListeners emit listeners listenerCount setMaxListeners'.split(' '),
   // 安装模块
   util: function apiUtil(util) {
     // 扩展请求接口
@@ -606,9 +608,9 @@ Object.assign(ddvRestFulApi, {
 
 });
 
-__webpack_require__(10);
+__webpack_require__(11);
 // 对外扩张接口
-__webpack_require__(9);
+__webpack_require__(10);
 
 /***/ }),
 /* 2 */
@@ -663,7 +665,7 @@ var cryptoJsCore = __webpack_require__(7);
 // 编码base64模块
 var cryptoJsBase64 = __webpack_require__(8);
 // var cryptoJsUtf8 =
-__webpack_require__(13);
+__webpack_require__(14);
 var getSessionTrueCbs = [];
 var getSessionInitCbs = [];
 var _getSessionTrueDataCbsIng = false;
@@ -1660,11 +1662,11 @@ var sign = module.exports = Object.assign(function sign(o) {
 var session = __webpack_require__(3);
 var cryptoJsCore = __webpack_require__(7);
 // var cryptoJsMd5 =
-__webpack_require__(15);
+__webpack_require__(16);
 // var cryptoJsHmacSha256 =
-__webpack_require__(14);
+__webpack_require__(15);
 var cryptoJsBase64 = __webpack_require__(8);
-var cryptoJsHex = __webpack_require__(12);
+var cryptoJsHex = __webpack_require__(13);
 
 /***/ }),
 /* 5 */
@@ -1885,8 +1887,8 @@ module.exports = function () {
 "use strict";
 
 
-var http = __webpack_require__(16);
-var https = __webpack_require__(17);
+var http = __webpack_require__(18);
+var https = __webpack_require__(19);
 var session = __webpack_require__(3);
 var isWindow = typeof window !== 'undefined' && window.window === window;
 // 发送请求
@@ -2048,6 +2050,15 @@ module.exports = require("crypto-js/enc-base64");
 "use strict";
 
 
+module.exports = __webpack_require__(17);
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var api = __webpack_require__(1);
 api.url = __webpack_require__(5);
 api.ajax = __webpack_require__(6);
@@ -2070,7 +2081,7 @@ if (typeof window !== 'undefined' && window.window === window) {
 }
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2174,7 +2185,7 @@ api.dataErrorEmit = function dataErrorEmit(input) {
 };
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2247,43 +2258,49 @@ function nextTick(fn) {
 }
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/enc-hex");
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/enc-utf8");
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/hmac-sha256");
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/md5");
 
 /***/ }),
-/* 16 */
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = require("events");
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("http");
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = require("https");
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
