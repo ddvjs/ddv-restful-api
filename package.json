@@ -46,7 +46,9 @@
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
     "webpack": "^2.2.0",
-    "webpack-node-externals": "^1.5.4"
+    "webpack-node-externals": "^1.5.4",
+    "es5-shim":"^4.5.9",
+    "es6-shim":"^0.35.3"
   },
   "dependencies": {
     "crypto-js": "^3.1.9-1"

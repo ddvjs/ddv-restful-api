@@ -1,4 +1,6 @@
 'use strict'
+require('es5-shim')
+require('es6-shim')
 // 导出模块
 module.exports = util
 // 创建最后总和
