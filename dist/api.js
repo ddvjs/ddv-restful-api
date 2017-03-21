@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 22);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,10 +73,12 @@ module.exports =
 
 "use strict";
 
-// 导出模块
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+__webpack_require__(17);
+__webpack_require__(18);
+// 导出模块
 module.exports = util;
 // 创建最后总和
 var createNewidSumLast = 0;
@@ -591,7 +593,7 @@ ddvRestFulApi['default'] = ddvRestFulApi;
 
 Object.assign(ddvRestFulApi, {
   // 默认安装一下方法
-  utilInitKey: 'api get post put del delete data addListener on once removeListener removeAllListeners emit listeners listenerCount setMaxListeners'.split(' '),
+  utilInitKey: 'api get post put del delete data'.split(' '),
   // 安装模块
   util: function apiUtil(util) {
     // 扩展请求接口
@@ -1887,8 +1889,8 @@ module.exports = function () {
 "use strict";
 
 
-var http = __webpack_require__(18);
-var https = __webpack_require__(19);
+var http = __webpack_require__(20);
+var https = __webpack_require__(21);
 var session = __webpack_require__(3);
 var isWindow = typeof window !== 'undefined' && window.window === window;
 // 发送请求
@@ -2050,7 +2052,7 @@ module.exports = require("crypto-js/enc-base64");
 "use strict";
 
 
-module.exports = __webpack_require__(17);
+module.exports = __webpack_require__(19);
 
 /***/ }),
 /* 10 */
@@ -2285,22 +2287,34 @@ module.exports = require("crypto-js/md5");
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = require("events");
+module.exports = require("es5-shim");
 
 /***/ }),
 /* 18 */
 /***/ (function(module, exports) {
 
-module.exports = require("http");
+module.exports = require("es6-shim");
 
 /***/ }),
 /* 19 */
 /***/ (function(module, exports) {
 
-module.exports = require("https");
+module.exports = require("events");
 
 /***/ }),
 /* 20 */
+/***/ (function(module, exports) {
+
+module.exports = require("http");
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+module.exports = require("https");
+
+/***/ }),
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
