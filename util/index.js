@@ -202,6 +202,7 @@ Object.assign(util, {
         for (i = 0; i < data.length; i++) {
           // 值
           value = data[i]
+          if (value === void 0) continue
           // 键
           keyt = util._buildParamsAddPrefix(i, prefix, (typeof value === 'object'))
           // 递归处理对象和数组
@@ -220,6 +221,7 @@ Object.assign(util, {
           }
           // 值
           value = data[key]
+          if (value === void 0) continue
           // 键
           keyt = util._buildParamsAddPrefix(key, prefix)
           if (typeof value === 'object') {

@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -76,8 +76,8 @@ module.exports =
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-__webpack_require__(17);
 __webpack_require__(18);
+__webpack_require__(19);
 // 导出模块
 module.exports = util;
 // 创建最后总和
@@ -230,7 +230,7 @@ Object.assign(util, {
 
 // nextTick
 Object.assign(util, {
-  nextTick: __webpack_require__(12)
+  nextTick: __webpack_require__(13)
 });
 
 // urlEncode 编码
@@ -279,6 +279,7 @@ Object.assign(util, {
         for (i = 0; i < data.length; i++) {
           // 值
           value = data[i];
+          if (value === void 0) continue;
           // 键
           keyt = util._buildParamsAddPrefix(i, prefix, (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object');
           // 递归处理对象和数组
@@ -297,6 +298,7 @@ Object.assign(util, {
           }
           // 值
           value = data[key];
+          if (value === void 0) continue;
           // 键
           keyt = util._buildParamsAddPrefix(key, prefix);
           if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
@@ -375,18 +377,21 @@ function ddvRestFulApi(path, req, res) {
           e.statusCode = res.statusCode;
           e.error_id = res.status;
           e.message = res.status || 'Unknow Error';
+          e.body = res.body;
           reject(e);
         } else if (r) {
           if (r.state) {
             r.statusCode = r.statusCode || r.code || res.statusCode;
             r.error_id = r.error_id || res.status;
             r.message = r.message || r.msg || res.status || 'Unknow Error';
+            r.body = res.body;
             resolve(r);
           } else {
             e = new Error(r.message || r.msg || res.status || 'Unknow Error');
             e.statusCode = r.statusCode || r.code || res.statusCode;
             e.error_id = r.error_id || res.status;
             e.message = r.message || r.msg || res.status || 'Unknow Error';
+            e.body = res.body;
             reject(e);
           }
         }
@@ -470,6 +475,23 @@ function apiPromiseInit(promise, path, req, res) {
     options.port = url('port', options.baseUrl);
     options.protocol = url('protocol', options.baseUrl);
     options.request_id = options.request_id || util.createRequestId();
+  }).then(function removeUndefinedValue() {
+    var key;
+    for (key in options.queryObject) {
+      if (options.queryObject[key] === void 0) {
+        delete options.queryObject[key];
+      }
+    }
+    for (key in options.data) {
+      if (options.data[key] === void 0) {
+        delete options.data[key];
+      }
+    }
+    for (key in options.headers) {
+      if (options.headers[key] === void 0) {
+        delete options.headers[key];
+      }
+    }
   }).then(function buildParamsRun() {
     var str;
     if (options.queryObject) {
@@ -633,6 +655,7 @@ module.exports = function runRequest(o) {
       e.statusCode = o.serverRes.statusCode;
       e.error_id = e.error_id || o.serverRes.error_id || o.serverRes.status;
       e.message = o.serverRes.message || o.serverRes.status || 'Unknow Error';
+      e.body = o.serverRes.body;
       throw e;
     }
   }).catch(function (e) {
@@ -667,7 +690,7 @@ var cryptoJsCore = __webpack_require__(7);
 // 编码base64模块
 var cryptoJsBase64 = __webpack_require__(8);
 // var cryptoJsUtf8 =
-__webpack_require__(14);
+__webpack_require__(15);
 var getSessionTrueCbs = [];
 var getSessionInitCbs = [];
 var _getSessionTrueDataCbsIng = false;
@@ -1664,11 +1687,11 @@ var sign = module.exports = Object.assign(function sign(o) {
 var session = __webpack_require__(3);
 var cryptoJsCore = __webpack_require__(7);
 // var cryptoJsMd5 =
-__webpack_require__(16);
+__webpack_require__(17);
 // var cryptoJsHmacSha256 =
-__webpack_require__(15);
+__webpack_require__(16);
 var cryptoJsBase64 = __webpack_require__(8);
-var cryptoJsHex = __webpack_require__(13);
+var cryptoJsHex = __webpack_require__(14);
 
 /***/ }),
 /* 5 */
@@ -1889,8 +1912,8 @@ module.exports = function () {
 "use strict";
 
 
-var http = __webpack_require__(20);
-var https = __webpack_require__(21);
+var http = __webpack_require__(21);
+var https = __webpack_require__(22);
 var session = __webpack_require__(3);
 var isWindow = typeof window !== 'undefined' && window.window === window;
 // 发送请求
@@ -2052,7 +2075,7 @@ module.exports = require("crypto-js/enc-base64");
 "use strict";
 
 
-module.exports = __webpack_require__(19);
+module.exports = __webpack_require__(20);
 
 /***/ }),
 /* 10 */
@@ -2192,6 +2215,15 @@ api.dataErrorEmit = function dataErrorEmit(input) {
 
 "use strict";
 
+
+module.exports = __webpack_require__(1);
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 // 导出模块
 
 module.exports = nextTick;
@@ -2260,67 +2292,58 @@ function nextTick(fn) {
 }
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/enc-hex");
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/enc-utf8");
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/hmac-sha256");
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto-js/md5");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("es5-shim");
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = require("es6-shim");
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = require("http");
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = require("https");
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(1);
 
 /***/ })
 /******/ ]);
