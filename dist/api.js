@@ -2118,7 +2118,7 @@ var api = __webpack_require__(1);
 var util = __webpack_require__(0);
 
 api.data = function tryGetData(context, promiseFnRun, _dataOld) {
-  if (util.isFunction(context) || context instanceof Promise) {
+  if (util.isFunction(context) || context && util.isFunction(context.then)) {
     promiseFnRun = context;
     context = void 0;
   }
@@ -2134,12 +2134,12 @@ api.data = function tryGetData(context, promiseFnRun, _dataOld) {
         }
       }, context);
       promiseFnReload = promiseFnRun;
-    } else if (promiseFnRun instanceof Promise) {
+    } else if (promiseFnRun && util.isFunction(promiseFnRun.then)) {
       _promise = promiseFnRun;
     }
     self = promiseFnRun = void 0;
     // 必须是Promise实例化的对象
-    if (_promise instanceof Promise) {
+    if (_promise && util.isFunction(_promise.then)) {
       _promise.then(function resData(res) {
         // 如果没有return数据就返回一个data
         res = res === void 0 ? data : res;
