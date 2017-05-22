@@ -20,7 +20,7 @@ module.exports = {
     }
   },
   externals: [
-    nodeExternals()
+//    nodeExternals()
   ],
   module: {
     rules: [{
