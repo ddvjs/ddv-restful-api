@@ -8,8 +8,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, './dist'),  // 设置打包后的js的输出位置
-    filename: '[name].js',  // 和入口文件的名字相同
-    libraryTarget: 'commonjs2'
+    filename: '[name].js'  // 和入口文件的名字相同
   },
   resolve: {
     extensions: ['.js'],
