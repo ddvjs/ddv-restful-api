@@ -1,9 +1,7 @@
 // var webpack = require("webpack")
-var nodeExternals = require('webpack-node-externals')
 var path = require('path')
 
 module.exports = {
-  target: 'node',
   devtool: 'sourcemap',
   entry: {
     'api': './lib/index.js'
@@ -20,7 +18,6 @@ module.exports = {
     }
   },
   externals: [
-//    nodeExternals()
   ],
   module: {
     rules: [{
