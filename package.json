@@ -36,6 +36,7 @@
   },
   "homepage": "https://github.com/ddvjs/ddv-restful-api#readme",
   "devDependencies": {
+    "ddv-auth": "~0.0.3",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
     "babel-eslint": "^7.0.0",
