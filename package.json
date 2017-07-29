@@ -1,6 +1,6 @@
 {
   "name": "ddv-restful-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ddv-restful-api",
   "main": "./lib/api.js",
   "scripts": {
