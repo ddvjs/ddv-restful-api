@@ -36,7 +36,6 @@
   },
   "homepage": "https://github.com/ddvjs/ddv-restful-api#readme",
   "devDependencies": {
-    "ddv-auth": "~0.0.3",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
     "babel-eslint": "^7.0.0",
@@ -50,7 +49,7 @@
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
-    "ddv-auth": "~0.0.3",
+    "ddv-auth": "~0.0.4",
     "crypto-js": "^3.1.9-1",
     "es5-shim": "^4.5.9",
     "es6-shim": "^0.35.3"
