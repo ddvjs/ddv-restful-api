@@ -1,4 +1,3 @@
-'use strict'
 // 导出模块
 var util = require('ddv-auth/util')
 module.exports = util
