@@ -1,8 +1,7 @@
 var ddvRestFulApi = require('./api.js')
-var onAccessKey = require('./onAccessKey.js')
-var request = require('./request.js')
-var parseDataByBody = require('./parseDataByBody.js')
-var apiTryData = require('./apiTryData.js')
+var onAccessKey = require('./lib/onAccessKey.js')
+var request = require('./lib/request.js')
+var apiTryData = require('./lib/apiTryData.js')
 module.exports = ddvRestFulApi.getApi(function (api) {
   api.setHeadersPrefix('x-ddv-')
   api.onAccessKey = onAccessKey

@@ -2,7 +2,7 @@
   "name": "ddv-restful-api",
   "version": "0.2.2",
   "description": "ddv-restful-api",
-  "main": "./lib/index.js",
+  "main": "./index.js",
   "scripts": {
     "lint": "eslint --ext .js lib --ignore-pattern dist",
     "dist": "npm run lint&&webpack",
