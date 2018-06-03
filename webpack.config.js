@@ -4,7 +4,7 @@ var path = require('path')
 module.exports = {
   devtool: 'sourcemap',
   entry: {
-    'api': './lib/index.js'
+    'api': './index.js'
   },
   output: {
     path: path.join(__dirname, './dist'),  // 设置打包后的js的输出位置
